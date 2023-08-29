@@ -6,7 +6,7 @@
    <groupId>org.healthnlp</groupId>
    <artifactId>deepphe-nlp</artifactId>
    <version>0.7.0</version>
-   <name>deepphe-core</name>
+   <name>deepphe-nlp</name>
    <description>Cancer Deep Phenotype Extraction (DeepPhe) Core module</description>
    <packaging>jar</packaging>
    <properties>
