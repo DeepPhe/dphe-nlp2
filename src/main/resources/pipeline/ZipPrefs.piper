@@ -1,0 +1,8 @@
+
+// Place json output in zip files
+set ZipJson=no
+// Maximum json files to put in a zip.  A counter will be appended to zip file names.
+set ZipMax=100
+
+// Place table output in zip files.  The last table file will not be zipped (future fix).
+set ZipTable=yes
