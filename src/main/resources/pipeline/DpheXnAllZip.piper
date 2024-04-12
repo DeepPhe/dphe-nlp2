@@ -32,7 +32,7 @@ load pipeline/SmallJsonPrefs
 load pipeline/ZipPrefs
 load pipeline/InfoLimits
 
-//reader ZipFileTreeReader
+reader ZipFileTreeReader
 
 // Connect to local ontology graph embedded db.
 add Neo4jEmbeddedConnectAe
@@ -185,7 +185,7 @@ add LogFileWriter SubDirectory=LOG
 
 add PatientSummaryXnJsonFileWriter SubDirectory=JSON
 
-add PatientSummaryXnTableWriter PatientMax=10
+add PatientSummaryXnTableWriter PatientMax=100
 
 // Write the patient phenotypes from Multi-Cancer CI creation
 //add CiCancersBsvWriter SubDirectory=CI_EVAL
@@ -210,7 +210,8 @@ add PatientSummaryXnTableWriter PatientMax=10
 //add DeepPheSummaryWriter SubDirectory=SUMMARY
 
 
-
+//add UabPatientTableWriter SubDirectory=PATIENT_TABLE TableType=HTML
+//add UabRecurrenceTableWriter SubDirectory=RECURRENCE TableType=HTML
 
 // Anything that needs to use the patient cas or the patient summary node need to be here!
 add PatientCasCleaner

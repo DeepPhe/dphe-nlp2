@@ -14,6 +14,7 @@ import org.healthnlp.deepphe.nlp.patient.PatientSummaryXnStore;
 
 import java.io.*;
 import java.net.URI;
+import java.nio.file.FileSystem;
 import java.nio.file.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
@@ -130,7 +131,7 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
    private String _zipJson;
 
    static public final String ZIP_MAX_PARAM = "ZipMax";
-   static public final String ZIP_MAX_DESC = "The maximum number of files per zip.";
+   static public final String ZIP_MAX_DESC = "The maximum number of patients per zip.";
    @ConfigurationParameter(
          name = ZIP_MAX_PARAM,
          description = ZIP_MAX_DESC,
@@ -229,18 +230,26 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
       if ( !PatientCasUtil.isPatientFull( patientId ) ) {
          return;
       }
+      if ( _zipMax > 0 ) {
+         // Increase the zip count here, not at the file level!
+         _zipCount++;
+         if ( _zipCount > _zipMax ) {
+            _zipCount = 1;
+            _zipIndex++;
+         }
+      }
       final GsonBuilder gsonBuilder = new GsonBuilder().serializeSpecialFloatingPointValues();
       if ( AeParamUtil.isTrue( _prettyPrint ) ) {
          gsonBuilder.setPrettyPrinting();
       }
       final Gson gson = gsonBuilder.create();
       if ( AeParamUtil.isTrue( _splitJson ) ) {
-         writeSplitJson( gson, patientSummary, outputDir );
+         writeSplitJson( gson, patientSummary, outputDir, patientId );
          return;
       }
       final String summaryJson = gson.toJson( patientSummary );
       if ( AeParamUtil.isTrue( _zipJson ) ) {
-         writeFullZip( summaryJson, outputDir, super.getSimpleSubDirectory(), patientId );
+         writeFullZip( summaryJson, outputDir, super.getSimpleSubDirectory(), patientId, patientId );
          return;
       }
       final File file = new File( outputDir, patientId + ".json" );
@@ -251,25 +260,24 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
 
    private void writeSplitJson( final Gson gson,
                                 final PatientSummaryXn patientSummary,
-                                final String outputDir ) throws IOException {
-      writePatient( gson, patientSummary, outputDir );
+                                final String outputDir, final String patientId ) throws IOException {
+      writePatient( gson, patientSummary, outputDir, patientId );
       for ( DocumentXn document : patientSummary.getDocuments() ) {
-         writeDocument( gson, document, outputDir );
+         writeDocument( gson, document, outputDir, patientId );
       }
-      writeCancers( gson, patientSummary, outputDir );
-      writeConcepts( gson, patientSummary, outputDir );
+      writeCancers( gson, patientSummary, outputDir, patientId );
+      writeConcepts( gson, patientSummary, outputDir, patientId );
    }
 
    private void writePatient( final Gson gson,
-                             final PatientSummaryXn patientSummary,
-                             final String outputDir ) throws IOException {
-      final String patientId = patientSummary.getId();
+                              final PatientSummaryXn patientSummary,
+                              final String outputDir, final String patientId ) throws IOException {
       final BasicPatient patient = new BasicPatient( patientId,
             patientSummary.getName(), patientSummary.getGender(),
             patientSummary.getBirth(), patientSummary.getDeath() );
       final String json = gson.toJson( patient );
       if ( AeParamUtil.isTrue( _zipJson ) ) {
-         writeFullZip( json, outputDir, super.getSimpleSubDirectory(), patientId );
+         writeFullZip( json, outputDir, super.getSimpleSubDirectory(), patientId, patientId );
          return;
       }
       final File file = new File( outputDir, patientId + ".json" );
@@ -279,12 +287,12 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
    }
 
    private void writeDocument( final Gson gson,
-                              final DocumentXn document,
-                               final String outputDir ) throws IOException {
+                               final DocumentXn document,
+                               final String outputDir, final String patientId ) throws IOException {
       final String json = gson.toJson( document );
       final String documentId = document.getId();
       if ( AeParamUtil.isTrue( _zipJson ) ) {
-         writeFullZip( json, outputDir, super.getSimpleSubDirectory(), documentId + "_Doc" );
+         writeFullZip( json, outputDir, super.getSimpleSubDirectory(), patientId, documentId + "_Doc" );
          return;
       }
       final File file = new File( outputDir, documentId + "_Doc.json" );
@@ -294,13 +302,12 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
    }
 
    private void writeCancers( final Gson gson,
-                             final PatientSummaryXn patientSummary,
-                              final String outputDir ) throws IOException {
-      final String patientId = patientSummary.getId();
+                              final PatientSummaryXn patientSummary,
+                              final String outputDir, final String patientId ) throws IOException {
       final List<CancerSummaryXn> cancers = patientSummary.getCancers();
       final String json = gson.toJson( cancers );
       if ( AeParamUtil.isTrue( _zipJson ) ) {
-         writeFullZip( json, outputDir, super.getSimpleSubDirectory(), patientId + "_Cancers" );
+         writeFullZip( json, outputDir, super.getSimpleSubDirectory(), patientId, patientId + "_Cancers" );
          return;
       }
       final File file = new File( outputDir, patientId + "_Cancers.json" );
@@ -310,13 +317,12 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
    }
 
    private void writeConcepts( final Gson gson,
-                             final PatientSummaryXn patientSummary,
-                             final String outputDir ) throws IOException {
-      final String patientId = patientSummary.getId();
+                               final PatientSummaryXn patientSummary,
+                               final String outputDir, final String patientId ) throws IOException {
       final Concepts concepts = new Concepts( patientSummary.getConcepts(), patientSummary.getConceptRelations() );
       final String json = gson.toJson( concepts );
       if ( AeParamUtil.isTrue( _zipJson ) ) {
-         writeFullZip( json, outputDir, super.getSimpleSubDirectory(), patientId + "_Concepts" );
+         writeFullZip( json, outputDir, super.getSimpleSubDirectory(), patientId, patientId + "_Concepts" );
          return;
       }
       final File file = new File( outputDir, patientId + "_Concepts.json" );
@@ -344,16 +350,17 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
       out.close();
    }
 
-   private String getZipName( final String subDirectory ) {
+   private String getZipName( final String subDirectory, final String patientId ) {
+      if ( _zipMax == 1 ) {
+//         LOGGER.info( "ZipMax is 1, returning PatientId " + patientId );
+         return patientId;
+      }
       final String zipName = subDirectory.isEmpty() ? "AllZip" : subDirectory;
       if ( _zipMax <= 0 ) {
+//         LOGGER.info( "ZipMax is <= 0, returning zipName " + zipName );
          return zipName;
       }
-      _zipCount++;
-      if ( _zipCount > _zipMax ) {
-         _zipCount = 1;
-         _zipIndex++;
-      }
+//      LOGGER.info( "ZipMax is > 1, returning zipName index " + zipName + "_" + String.format( "%09d", _zipIndex ) );
       return zipName + "_" + String.format( "%09d", _zipIndex );
    }
 
@@ -366,11 +373,12 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
     * @throws IOException -
     */
    private void writeFullZip( final String summaryJson, final String rootPath,
-                              final String subDirectory, final String patientId )
+                              final String subDirectory, final String patientId,
+                              final String filePrefix )
          throws IOException {
-      final String zipName = getZipName( subDirectory );
+      final String zipName = getZipName( subDirectory, patientId );
       final String zipFilePath = rootPath + "/" + zipName + ".json.zip";
-      final String filename = patientId + ".json";
+      final String filename = filePrefix + ".json";
       zipAppend( zipFilePath, filename, summaryJson.getBytes() );
    }
 
