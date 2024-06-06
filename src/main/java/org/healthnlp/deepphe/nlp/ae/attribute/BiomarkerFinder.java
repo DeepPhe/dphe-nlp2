@@ -2,18 +2,10 @@ package org.healthnlp.deepphe.nlp.ae.attribute;
 
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
 import org.apache.ctakes.core.util.Pair;
-import org.apache.ctakes.core.util.annotation.ConceptBuilder;
-import org.apache.ctakes.core.util.annotation.IdentifiedAnnotationBuilder;
-import org.apache.ctakes.core.util.annotation.SemanticGroup;
 import org.apache.ctakes.core.util.regex.RegexSpanFinder;
 import org.apache.ctakes.ner.creator.AnnotationCreator;
 import org.apache.ctakes.ner.creator.DpheAnnotationCreator;
-import org.apache.ctakes.ner.detail.Details;
 import org.apache.ctakes.ner.group.dphe.DpheGroup;
-import org.apache.ctakes.ner.term.DetailedTerm;
-import org.apache.ctakes.ner.term.DiscoveredTerm;
-import org.apache.ctakes.typesystem.type.constants.CONST;
-import org.apache.ctakes.typesystem.type.refsem.OntologyConcept;
 import org.apache.ctakes.typesystem.type.textsem.AnatomicalSiteMention;
 import org.apache.ctakes.typesystem.type.textsem.EventMention;
 import org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation;
@@ -24,13 +16,15 @@ import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static org.apache.ctakes.ner.group.dphe.DpheGroup.*;
-import static org.healthnlp.deepphe.neo4j.constant.Neo4jConstants.DPHE_CODING_SCHEME;
+import static org.apache.ctakes.ner.group.dphe.DpheGroup.GENE_PRODUCT;
+import static org.apache.ctakes.ner.group.dphe.DpheGroup.TEST_RESULT;
 
 /**
  * @author SPF , chip-nlp
@@ -150,37 +144,50 @@ final public class BiomarkerFinder extends JCasAnnotator_ImplBase {
             "(?:>|< ?)?[0-9]{1,2}(?:\\.[0-9]{1,2} ?)? ?%(?: positive)?",
             true ),
 
-      BRCA1( "BreastCancerType1SusceptibilityProtein", "Breast Cancer Type 1 Susceptibility Protein", GENE_PRODUCT,
+      BRCA1( "BreastCancerType1SusceptibilityProtein", "Breast Cancer Type 1 Susceptibility Protein",
+            GENE_PRODUCT,
             "(?:BRCA1|BROVCA1|(?:Breast Cancer Type 1))"
-             + "(?: Susceptibility)?(?: Gene)?(?: Polymorphism)?",
-             "",
-             "" ),
+                  + "(?: Susceptibility)?(?: Gene)?(?: Polymorphism)?",
+            "",
+            REGEX_POS_NEG_UNK_NA ),
 
-      BRCA2( "BreastCancerType2SusceptibilityProtein", "Breast Cancer Type 2 Susceptibility Protein", GENE_PRODUCT,
+      BRCA2( "BreastCancerType2SusceptibilityProtein", "Breast Cancer Type 2 Susceptibility Protein",
+            GENE_PRODUCT,
             "(?:BRCA2|BROVCA2|FANCD1|(?:Breast Cancer Type 2))"
-             + "(?: Susceptibility)?(?: Gene)?(?: Polymorphism)?",
-             "",
-             "" ),
+                  + "(?: Susceptibility)?(?: Gene)?(?: Polymorphism)?",
+            "",
+            REGEX_POS_NEG_UNK_NA ),
+
+      PIK3CA( "Phosphatidylinositol4_cma_5_sub_Bisphosphate3_sub_KinaseCatalyticSubunitAlphaIsoform",
+            "Phosphatidylinositol 4,5-Bisphosphate 3-Kinase Catalytic Subunit Alpha Isoform",
+            GENE_PRODUCT,
+            "(?:PIK3CA|PI3K|p110|PI3 ?-? ?Kinase)", " ?-?(?: Subunit)?(?: Alpha)?",
+            REGEX_POS_NEG_UNK_NA, true ),
+
+      TP53( "CellularTumorAntigenP53",
+            "Cellular Tumor Antigen p53",
+            GENE_PRODUCT,
+            "(?:TP53|p53|(?:protein 53)|(?:Phosphoprotein p53))",
+            "(?: protein)?(?: tumor suppressor)?",
+            REGEX_POS_NEG_UNK_NA, true ),
 
       ALK( "ALKTyrosineKinaseReceptor", "ALK Tyrosine Kinase Receptor", GENE_PRODUCT,
             "(?:ALK\\+?-?|CD246\\+?-?|(?:Anaplastic Lymphoma (?:Receptor Tyrosine )?Kinase))"
-           + "(?: Fusion)?(?: Gene|Oncogene)?(?: Alteration)?",
-           "",
-           "(?:" + REGEX_POS_NEG_UNK_NA +")|(?:no rearrangement)",
+                  + "(?: Fusion)?(?: Gene|Oncogene)?(?: Alteration)?",
+            "",
+            "(?:" + REGEX_POS_NEG_UNK_NA + ")|(?:no rearrangement)",
 
-           true ),
+            true ),
 
       EGFR( "EpidermalGrowthFactorReceptor", "Epidermal Growth Factor Receptor", GENE_PRODUCT,
-            "EGFR\\+?-?|HER1\\+?-?|ERBB\\+?-?|C-ERBB1\\+?-?|(?:Epidermal Growth Factor)"
-            + "(?: Receptor)?",
+            "EGFR\\+?-?|HER1\\+?-?|ERBB\\+?-?|C-ERBB1\\+?-?|(?:Epidermal Growth Factor)(?: Receptor)?",
             "",
-            "(?:" + REGEX_POS_NEG_UNK_NA +")|(?:not mutant)|(?:no mutations?)|",
+            "(?:" + REGEX_POS_NEG_UNK_NA + ")|(?:not mutant)|(?:no mutations?)|",
             true ),
 
       BRAF( "Serine_sl_Threonine_sub_ProteinKinaseB_sub_Raf", "Serine/Threonine-Protein Kinase B-Raf",
             GENE_PRODUCT,
-            "(?:Serine\\/Threonine-Protein Kinase )?B-?RAF1?"
-            + "(?: Fusion)?",
+            "(?:Serine\\/Threonine-Protein Kinase )?B-?RAF1?(?: Fusion)?",
             "",
             REGEX_POS_NEG_UNK_NA ),
 

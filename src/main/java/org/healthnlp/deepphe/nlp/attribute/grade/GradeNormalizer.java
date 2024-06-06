@@ -39,51 +39,65 @@ public class GradeNormalizer extends DefaultXnAttributeNormalizer {
 //      return bestCode <= 0 ? "9" : bestCode+"";
 //   }
 
+   static private final String NORMAL_NO_VALUE = "9";
+
    public String getNormalNoValue() {
-      return "9";
+      return NORMAL_NO_VALUE;
    }
 
    public String getNormalValue( final UriConcept concept ) {
-      final String uri = concept.getUri();
+      return getUriNormalValue( concept.getUri() );
+   }
+
+
+   static public String getUriNormalValue( final String uri ) {
       if ( uri.startsWith( "Gleason_Score_" ) ) {
          if ( uri.endsWith( "6" ) ) {
             // well differentiated
             return "1";
-         } else if ( uri.endsWith( "7" ) ) {
+         }
+         else if ( uri.endsWith( "7" ) ) {
             // moderately differentiated
             return "2";
-         } else if ( uri.endsWith( "8" )
-                     || uri.endsWith( "9" )
-                     || uri.endsWith( "10" ) ) {
+         }
+         else if ( uri.endsWith( "8" )
+               || uri.endsWith( "9" )
+               || uri.endsWith( "10" ) ) {
             // poorly differentiated
             return "3";
-         } else {
-            return getNormalNoValue();
+         }
+         else {
+            return NORMAL_NO_VALUE;
          }
          // There is a Tumor_Grade_G0
       } else if ( uri.equals( "Grade1" )
-                  || uri.equals( "LowGrade" )
-                  || uri.equals( "LowGradeMalignantNeoplasm" )
-                  || uri.equals( "WellDifferentiated" ) ) {
+            || uri.equals( "LowGrade" )
+            || uri.equals( "LowGradeMalignantNeoplasm" )
+            || uri.equals( "WellDifferentiated" ) ) {
          return "1";
-      } else if ( uri.equals( "Grade2" )
-                  || uri.equals( "IntermediateGrade" )
-                  || uri.equals( "IntermediateGradeMalignantNeoplasm" )
-                  || uri.equals( "ModeratelyDifferentiated" ) ) {
+      }
+      else if ( uri.equals( "Grade2" )
+            || uri.equals( "IntermediateGrade" )
+            || uri.equals( "IntermediateGradeMalignantNeoplasm" )
+            || uri.equals( "ModeratelyDifferentiated" ) ) {
          return "2";
-      } else if ( uri.equals( "Grade3" )
-                  || uri.equals( "HighGrade" )
-                  || uri.equals( "HighGradeMalignantNeoplasm" )
-                  || uri.equals( "PoorlyDifferentiated" ) ) {
+      }
+      else if ( uri.equals( "Grade3" )
+            || uri.equals( "Grade3a" )
+            || uri.equals( "Grade3b" )
+            || uri.equals( "HighGrade" )
+            || uri.equals( "HighGradeMalignantNeoplasm" )
+            || uri.equals( "PoorlyDifferentiated" ) ) {
          return "3";
-      } else if ( uri.equals( "Grade4" )
-                  || uri.equals( "Undifferentiated" ) ) {
+      }
+      else if ( uri.equals( "Grade4" )
+            || uri.equals( "Undifferentiated" ) ) {
 //                  || uri.equals( "Anaplastic" ))
          return "4";
 //      } else if ( uri.equals( "Grade5" ) ) {
 //         return 5;
       }
-      return getNormalNoValue();
+      return NORMAL_NO_VALUE;
    }
 
 

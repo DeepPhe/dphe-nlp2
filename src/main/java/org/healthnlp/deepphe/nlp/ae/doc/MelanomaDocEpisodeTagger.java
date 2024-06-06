@@ -46,11 +46,11 @@ final public class MelanomaDocEpisodeTagger extends CleartkAnnotator<String> {
 
    static public boolean hasDomainUris( final JCas jCas ) {
       Collection<IdentifiedAnnotation> melanomas
-            = Neo4jOntologyConceptUtil.getAnnotationsByUriBranch( jCas, "Melanocytic_Neoplasm" );
+            = Neo4jOntologyConceptUtil.getAnnotationsByUriBranch( jCas, "MelanocyticNeoplasm" );
       if ( !melanomas.isEmpty() ) {
          return true;
       }
-      melanomas = Neo4jOntologyConceptUtil.getAnnotationsByUriBranch( jCas, "Skin_Neoplasm" );
+      melanomas = Neo4jOntologyConceptUtil.getAnnotationsByUriBranch( jCas, "SkinNeoplasm" );
       return !melanomas.isEmpty();
    }
 

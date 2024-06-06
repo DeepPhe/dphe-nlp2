@@ -20,6 +20,12 @@ import org.apache.uima.util.Progress;
 import org.apache.uima.util.ProgressImpl;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -28,23 +34,53 @@ import java.util.zip.ZipFile;
  * @author SPF , chip-nlp
  * @since {1/23/2024}
  */
-@PipeBitInfo(
+@PipeBitInfo (
       name = "ZipFileTreeReader",
       description = "Reads zipped files in a directory tree.",
       role = PipeBitInfo.Role.READER
 )
-public class ZipFileTreeReader extends AbstractFileTreeReader  {
+public class ZipFileTreeReader extends AbstractFileTreeReader {
    static private final Logger LOGGER = Logger.getLogger( "ZipFileTreeReader" );
+
+
+   // TODO add standard parameter names and descriptions to the list that contains "InputDir" and "OutputDir"
+   // PatientList good for readers, writers, trainers, evals.    DateFormat for readers, writers, aes, utils, etc.
+   // Add some standard value options? JSON,XML,TXT  BSV,CSV,TAB  HTML
+   // TODO get rid of all-caps parameter names.
 
 
    static public final String PATIENT_LIST_PARAM = "PatientList";
    static public final String PATIENT_LIST_DESC = "Set a path to a list of desired patient IDs.";
-   @ConfigurationParameter(
+   @ConfigurationParameter (
          name = PATIENT_LIST_PARAM,
          description = PATIENT_LIST_DESC,
          mandatory = false
    )
    private String _patientListPath;
+
+//   static public final String DATE_FORMAT_PARAM = "DateFormat";
+//   static public final String DATE_FORMAT_DESC = "A format to parse dates.  e.g. dd-MM-yyyy_HH:mm:ss";
+//   @ConfigurationParameter (
+//         name = DATE_FORMAT_PARAM,
+//         description = DATE_FORMAT_DESC,
+//         defaultValue = "yyyyMMdd",
+//         mandatory = false
+//   )
+//   private String _dateFormat;
+//
+//   private DateTimeFormatter _dateFormatter;
+
+   static public final String CAS_DATE_FORMAT_PARAM = "CasDateFormat";
+   static public final String CAS_DATE_FORMAT_DESC = "Set a value for parameter CasDateFormat.";
+   @ConfigurationParameter (
+         name = CAS_DATE_FORMAT_PARAM,
+         description = CAS_DATE_FORMAT_DESC,
+         defaultValue = "MMddyyyykkmmss",
+         mandatory = false
+   )
+   private String _casDateFormat;
+
+   private DateTimeFormatter _casDateFormatter;
 
 
    private boolean _writeBanner_ = false;
@@ -74,12 +110,15 @@ public class ZipFileTreeReader extends AbstractFileTreeReader  {
    @Override
    public void initialize( final UimaContext context ) throws ResourceInitializationException {
       super.initialize( context );
+//      _dateFormatter = DateTimeFormatter.ofPattern( _dateFormat );
+      _casDateFormatter = DateTimeFormatter.ofPattern( _casDateFormat );
       // TODO - for zipPatientLevel in the zip getPatient just get the dir at that level.
       final Object zipPatientLevel = context.getConfigParameterValue( PATIENT_LEVEL );
       if ( zipPatientLevel != null ) {
          if ( zipPatientLevel instanceof Integer ) {
             _zipPatientLevel = (int)zipPatientLevel;
-         } else {
+         }
+         else {
             _zipPatientLevel = AeParamUtil.parseInt( zipPatientLevel.toString() );
          }
       }
@@ -494,13 +533,27 @@ public class ZipFileTreeReader extends AbstractFileTreeReader  {
       return createDocumentTime( entry.getTime() );
    }
 
+   // TODO move to abstract reader
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public DateFormat getDateFormat() {
+//      return new SimpleDateFormat( _dateFormat );
+      return new SimpleDateFormat( _casDateFormat );
+   }
+
    /**
     * @param millis -
     * @return the file's last modification date as a string : {@link #getDateFormat()}
     */
    // TODO move to super class
    protected String createDocumentTime( final long millis ) {
-      return getDateFormat().format( millis );
+//      _dateFormatter = DateTimeFormatter.ofPattern( _dateFormat );
+//      return _dateFormatter.format(
+      return _casDateFormatter.format(
+            LocalDateTime.ofInstant( Instant.ofEpochMilli( millis ), ZoneId.systemDefault() ) );
    }
 
 

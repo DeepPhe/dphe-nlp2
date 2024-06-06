@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
  * @version %I%
  * @since 5/30/2019
  */
-@PipeBitInfo(
+@PipeBitInfo (
       name = "GleasonFinder",
       description = "For deepphe.",
       products = { PipeBitInfo.TypeProduct.IDENTIFIED_ANNOTATION, PipeBitInfo.TypeProduct.GENERIC_RELATION },
@@ -34,7 +34,9 @@ final public class GleasonFinder extends JCasAnnotator_ImplBase {
 
    static private final Logger LOGGER = Logger.getLogger( "GleasonFinder" );
 
-   static private final String GLEASON_URI = "Gleason_Grade_Finding_For_Prostatic_Cancer";
+   static private final String GLEASON_URI = "GleasonGradingSystem";
+   // "GleasonScoreForProstateCancer" and "GleasonGradingSystem"
+
 
    // TODO also need pattern for "Gleason's Score:  6 (3+3)" and simpler "Gleason score 3+3"
 
@@ -78,7 +80,7 @@ final public class GleasonFinder extends JCasAnnotator_ImplBase {
 
       // Remove gleasons found by dictionary lookup
       final Collection<IdentifiedAnnotation> gleasons
-            = Neo4jOntologyConceptUtil.getAnnotationsByUriBranch( jCas, "Gleason_Grade" );
+            = Neo4jOntologyConceptUtil.getAnnotationsByUriBranch( jCas, "GleasonGradingSystem" );
       gleasons.forEach( IdentifiedAnnotation::removeFromIndexes );
 
       for ( Segment section : JCasUtil.select( jCas, Segment.class ) ) {

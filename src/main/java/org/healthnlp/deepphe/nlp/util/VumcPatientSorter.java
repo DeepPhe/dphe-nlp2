@@ -66,9 +66,9 @@ final public class VumcPatientSorter {
 
    static private String getNewFilename( final String[] splits ) {
       // Sometimes no index is given.
-      final String index = splits[ 3 ].isEmpty() ? "0" : splits[ 2 ];
+      final String index = splits[ 3 ].isEmpty() ? "0" : splits[ 3 ];
       // Remove the .txt filename extension;
-      final String encounter = splits[ 4 ].substring( 0, splits[ 3 ].length() - 4 );
+      final String encounter = splits[ 4 ].substring( 0, splits[ 4 ].length() - 4 );
       final String date = getDate( splits );
       final String category = getCategory( splits );
       String join = encounter + "-" + index + "-" + category + "-" + date + ".txt";

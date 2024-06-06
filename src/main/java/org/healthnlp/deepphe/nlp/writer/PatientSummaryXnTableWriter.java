@@ -1,16 +1,12 @@
 package org.healthnlp.deepphe.nlp.writer;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import org.apache.ctakes.core.cc.AbstractFileWriter;
 import org.apache.ctakes.core.util.AeParamUtil;
 import org.apache.ctakes.core.util.StringUtil;
 import org.apache.ctakes.core.util.doc.SourceMetadataUtil;
-import org.apache.ctakes.core.util.external.SystemUtil;
 import org.apache.ctakes.core.util.log.LogFileWriter;
 import org.apache.log4j.Logger;
 import org.apache.uima.UimaContext;
-import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -20,9 +16,6 @@ import org.healthnlp.deepphe.nlp.patient.PatientSummaryXnStore;
 import org.healthnlp.deepphe.nlp.uri.UriInfoCache;
 
 import java.io.*;
-import java.net.URI;
-import java.nio.file.FileSystem;
-import java.nio.file.*;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -120,7 +113,6 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
    public void initialize( final UimaContext context ) throws ResourceInitializationException {
       super.initialize( context );
       _timeText = TIME_FORMATTER.format( OffsetDateTime.now() );
-
    }
 
    /**
@@ -199,10 +191,10 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
       final File cancerFile = new File( outputDir, getFileName("Cancer" ) );
       final File tumorFile = new File( outputDir, getFileName("Tumor" ) );
       try ( Writer writer = new BufferedWriter( new FileWriter( cancerFile, true ) ) ) {
-         writer.write( cancerRows );
+         writer.append( cancerRows );
       }
       try ( Writer writer = new BufferedWriter( new FileWriter( tumorFile, true ) ) ) {
-         writer.write( tumorRows );
+         writer.append( tumorRows );
       }
       incrementCount( cancerFile, tumorFile );
    }
@@ -211,16 +203,24 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
       final StringBuilder sb = new StringBuilder();
       final String patientId = patient.getId();
       final List<CancerSummaryXn> cancers = new ArrayList<>( patient.getCancers() );
+      if ( cancers.isEmpty() ) {
+         sb.append( patientId );
+         for ( int i = 0; i < 3 + CANCER_ATTRIBUTES.size(); i++ ) {
+            sb.append( '|' );
+         }
+         LOGGER.info( "No Cancer for " + patientId );
+         return sb.append( "\n" ).toString();
+      }
       cancers.sort( Comparator.comparingDouble( CancerSummaryXn::getdConfidence ).reversed() );
       for ( CancerSummaryXn cancer : cancers ) {
          final List<AttributeXn> attributes = cancer.getAttributes();
          final String attributesText = compileCancerAttributes( attributes );
-         if  ( emptyAttributes( attributesText ) ) {
+         if ( emptyAttributes( attributesText ) ) {
             continue;
          }
          sb.append( patientId ).append( '|' ).append( cancer.getId() ).append( '|' )
-//           .append( UriInfoCache.getInstance().getPrefText( cancer.getClassUri() ) )
-           .append( UriInfoCache.getInstance().getCui( cancer.getClassUri() ) )
+           .append( UriInfoCache.getInstance().getPrefText( cancer.getClassUri() ) )
+//           .append( UriInfoCache.getInstance().getCui( cancer.getClassUri() ) )
            .append( ':' ).append( cancer.getConfidence() ).append( '|' );
          sb.append( attributesText ).append( "\n" );
       }
@@ -238,18 +238,26 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
    static private String compileTumors( final PatientSummaryXn patient ) {
       final StringBuilder sb = new StringBuilder();
       final String patientId = patient.getId();
-      final Map<String,TumorSummaryXn> tumorMap = new HashMap<>();
+      final Map<String, TumorSummaryXn> tumorMap = new HashMap<>();
       patient.getCancers()
              .stream()
              .map( CancerSummaryXn::getTumors )
              .flatMap( Collection::stream )
              .forEach( t -> tumorMap.putIfAbsent( t.getId(), t ) );
+      if ( tumorMap.isEmpty() ) {
+         sb.append( patientId );
+         for ( int i = 0; i < 3 + TUMOR_ATTRIBUTES.size(); i++ ) {
+            sb.append( '|' );
+         }
+         LOGGER.info( "No Tumor for " + patientId );
+         return sb.append( "\n" ).toString();
+      }
       final List<TumorSummaryXn> tumors = new ArrayList<>( tumorMap.values() );
       tumors.sort( Comparator.comparingDouble( TumorSummaryXn::getdConfidence ).reversed() );
       for ( TumorSummaryXn tumor : tumors ) {
          final List<AttributeXn> attributes = tumor.getAttributes();
          final String attributesText = compileTumorAttributes( attributes );
-         if  ( emptyAttributes( attributesText ) ) {
+         if ( emptyAttributes( attributesText ) ) {
             continue;
          }
          sb.append( patientId ).append( '|' ).append( tumor.getId() ).append( '|' )

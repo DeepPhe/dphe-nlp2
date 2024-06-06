@@ -7,7 +7,6 @@ import org.neo4j.graphdb.GraphDatabaseService;
 
 import java.util.Collection;
 
-import static org.healthnlp.deepphe.neo4j.util.SearchUtil.getUriBranchClasses;
 
 /**
  * @author SPF , chip-nlp
@@ -19,8 +18,8 @@ final public class BranchLister {
 
 //   static  private final String ROOT_WORD = "Non-Neoplastic Eye Disorder";
 //   static private final String ROOT_URI  = "Non_NeoplasticEyeDisorder";
-   static  private final String ROOT_WORD = "";
-   static private final String ROOT_URI  = "Lesion";
+static private final String ROOT_WORD = "";
+   static private final String ROOT_URI = "Abdomen";
 
    public static void main( String[] args ) {
       final GraphDatabaseService graphDb

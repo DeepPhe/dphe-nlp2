@@ -755,6 +755,9 @@ final public class CasedTokenizer {
       System.out.println( "Let's see if .we can mess.up some .100 numbers unlike (45.5) or 10,000,000 or 1,000.50." );
       System.out.println( String.join( " ",
             getTokens( "Let's see if .we can mess.up some .100 numbers unlike (45.5) or 10,000,000 or 1,000.50." ) ) );
+      System.out.println( String.join( " ",
+            getTokens( "What happens at 1:30 o'clock?" ) ) );
+
    }
 
 

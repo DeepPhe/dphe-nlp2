@@ -8,8 +8,10 @@ import org.apache.ctakes.typesystem.type.constants.CONST;
 import org.apache.ctakes.typesystem.type.refsem.Element;
 import org.apache.ctakes.typesystem.type.refsem.OntologyConcept;
 import org.apache.ctakes.typesystem.type.refsem.UmlsConcept;
+import org.apache.ctakes.typesystem.type.textsem.IdentifiedAnnotation;
 import org.apache.log4j.Logger;
 import org.apache.uima.UimaContext;
+import org.apache.uima.cas.CASException;
 import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
@@ -181,6 +183,32 @@ public class UabPatientTableWriter extends AbstractTableFileWriter {
          prefText = ((UmlsConcept)concept).getPreferredText();
       }
       final String uri = concept.getCode();
+
+      for ( int i = 0; i < element.getMentions().size(); i++ ) {
+         final IdentifiedAnnotation annotation = element.getMentions( i );
+         final int annotationBegin = annotation.getBegin();
+         final int annotationEnd = annotation.getEnd();
+         LOGGER.info( "Annotation span: " + annotationBegin + "," + annotationEnd );
+         LOGGER.info( "Annotation text: " + annotation.getCoveredText() );
+         try {
+            final JCas annotationCas = annotation.getCAS().getJCas();
+            LOGGER.info( "Annotation view: " + annotationCas.getViewName() );
+            final String docText = annotationCas.getDocumentText();
+            final int docLength = docText.length();
+            LOGGER.info( "Annotation Document length: " + docLength );
+            if ( annotationBegin > annotationEnd || annotationBegin < 0 || annotationEnd > docLength ) {
+               LOGGER.error( "Annotation span outside document text." );
+               continue;
+            }
+            final int snipBegin = Math.max( 0, annotationBegin - 50 );
+            final int snipEnd = Math.min( docLength, annotationEnd + 50 );
+            LOGGER.info( "Annotation snippet " + docText.substring( snipBegin, snipEnd ) );
+         } catch ( CASException casE ) {
+            LOGGER.error( "Could not find JCas for annotation " + annotation.getCoveredText() + " , element "
+                  + prefText );
+         }
+      }
+
 
       return Arrays.asList( uri, cui, type.name(), type.getGroupName(), type.getSemanticType(),
             prefText, negated, uncertain, historic, count, confidence );

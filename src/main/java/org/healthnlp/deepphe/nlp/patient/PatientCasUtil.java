@@ -51,4 +51,6 @@ final public class PatientCasUtil {
                                                   .getWantedDocCount( patientId );
       return getDocCases( patientId ).size() >= patientDocCount;
    }
+
+
 }

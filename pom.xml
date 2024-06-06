@@ -13,7 +13,8 @@
     <properties>
         <deepphe.version>latest</deepphe.version>
         <deepphe.neo4j.version>0.6.0</deepphe.neo4j.version>
-        <ctakes.version>5.0.0-SNAPSHOT</ctakes.version>
+        <!--        <ctakes.version>5.0.0-SNAPSHOT</ctakes.version>-->
+        <ctakes.version>5.1.0</ctakes.version>
         <hsqldb.version>2.3.4</hsqldb.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -253,10 +254,15 @@
             <version>${hsqldb.version}</version>
         </dependency>
 
+        <!--        <dependency>-->
+        <!--            <groupId>log4j</groupId>-->
+        <!--            <artifactId>log4j</artifactId>-->
+        <!--            <version>1.2.17</version>-->
+        <!--        </dependency>-->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+            <version>2.23.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.uima</groupId>

@@ -4,7 +4,6 @@ import org.apache.ctakes.core.util.StringUtil;
 import org.healthnlp.deepphe.neo4j.node.Mention;
 import org.healthnlp.deepphe.neo4j.node.MentionRelation;
 import org.healthnlp.deepphe.nlp.attribute.xn.DefaultXnAttributeNormalizer;
-
 import org.healthnlp.deepphe.nlp.concept.UriConcept;
 import org.healthnlp.deepphe.nlp.concept.UriConceptRelation;
 
@@ -23,7 +22,25 @@ public class BiomarkerNormalizer extends DefaultXnAttributeNormalizer {
    public String getNormalValue( final UriConcept concept ) {
 //      final Collection<String> texts = concept.getCodifications().getOrDefault( DPHE_VALUE_SCHEME, Collections.emptyList() );
 //      return texts.stream().map( NORMAL::getNormal ).distinct().collect( Collectors.joining( ";" ) );
-      final String value = concept.getValue();
+//      final String value = concept.getValue();
+      return String.join( ";", getNormalValues( concept.getValue() ) );
+//      final Collection<String> normals = Arrays.stream( StringUtil.fastSplit( value, ';' ) )
+//                                               .map( NORMAL::getNormal )
+//                                               .filter( n -> !n.isEmpty() )
+//                                               .collect( Collectors.toSet() );
+//      if ( normals.size() > 1 ) {
+//         normals.remove( "Unknown" );
+//      }
+//      if ( normals.size() > 1 ) {
+//         normals.remove( "Not Assessed" );
+//      }
+//      if ( normals.size() > 1 ) {
+//         normals.remove( "applicable" );
+//      }
+//      return String.join( ";", normals );
+   }
+
+   static public Collection<String> getNormalValues( final String value ) {
       final Collection<String> normals = Arrays.stream( StringUtil.fastSplit( value, ';' ) )
                                                .map( NORMAL::getNormal )
                                                .filter( n -> !n.isEmpty() )
@@ -37,9 +54,8 @@ public class BiomarkerNormalizer extends DefaultXnAttributeNormalizer {
       if ( normals.size() > 1 ) {
          normals.remove( "applicable" );
       }
-      return String.join( ";", normals );
+      return normals;
    }
-
 
 //   public String getBestCode( final Collection<CrConceptAggregate> aggregates ) {
 //      if ( aggregates.isEmpty() ) {

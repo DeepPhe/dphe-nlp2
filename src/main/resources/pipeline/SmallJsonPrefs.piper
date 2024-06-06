@@ -15,4 +15,4 @@ set WriteEvidence=yes
 
 // Write multiple json files for each patient: patient, cancers, concepts, documents.
 // The default value is "no".
-set SplitJson=no
+set SplitJson=yes
