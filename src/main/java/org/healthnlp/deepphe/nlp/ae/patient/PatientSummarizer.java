@@ -1,5 +1,6 @@
 package org.healthnlp.deepphe.nlp.ae.patient;
 
+import org.apache.ctakes.core.patient.PatientDocCounter;
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
 import org.apache.ctakes.core.util.AeParamUtil;
 import org.apache.ctakes.core.util.doc.SourceMetadataUtil;
@@ -18,7 +19,6 @@ import org.healthnlp.deepphe.nlp.attribute.xn.XnAttributeValue;
 import org.healthnlp.deepphe.nlp.concept.UriConcept;
 import org.healthnlp.deepphe.nlp.concept.UriConceptRelation;
 import org.healthnlp.deepphe.nlp.patient.PatientCasStore;
-import org.healthnlp.deepphe.nlp.patient.PatientCasUtil;
 import org.healthnlp.deepphe.nlp.patient.PatientSummaryXnStore;
 import org.healthnlp.deepphe.nlp.summary.PatientCasSummarizer;
 
@@ -353,9 +353,9 @@ public class PatientSummarizer extends JCasAnnotator_ImplBase {
    @Override
    public void process( final JCas jCas ) throws AnalysisEngineProcessException {
       final String patientId = SourceMetadataUtil.getPatientIdentifier( jCas );
-      if ( !PatientCasUtil.isPatientFull( patientId ) ) {
-         return;
-      }
+       if (!PatientDocCounter.getInstance().isPatientFull(patientId)) {
+           return;
+       }
       LOGGER.info( "Summarizing Patient " + patientId + " ..." );
       try ( DotLogger dotter = new DotLogger() ) {
          // The big deal ...

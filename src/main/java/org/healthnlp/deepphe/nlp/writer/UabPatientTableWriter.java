@@ -1,6 +1,7 @@
 package org.healthnlp.deepphe.nlp.writer;
 
 import org.apache.ctakes.core.cc.AbstractTableFileWriter;
+import org.apache.ctakes.core.patient.PatientDocCounter;
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
 import org.apache.ctakes.core.util.annotation.SemanticTui;
 import org.apache.ctakes.core.util.doc.SourceMetadataUtil;
@@ -16,7 +17,6 @@ import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.healthnlp.deepphe.nlp.patient.PatientCasStore;
-import org.healthnlp.deepphe.nlp.patient.PatientCasUtil;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -148,9 +148,9 @@ public class UabPatientTableWriter extends AbstractTableFileWriter {
    @Override
    protected List<List<String>> createDataRows( final JCas jCas ) {
       final String patientId = SourceMetadataUtil.getPatientIdentifier( jCas );
-      if ( !PatientCasUtil.isPatientFull( patientId ) ) {
-         return Collections.emptyList();
-      }
+       if (!PatientDocCounter.getInstance().isPatientFull(patientId)) {
+           return Collections.emptyList();
+       }
       _patientId = patientId;
       final JCas patientCas = PatientCasStore.getInstance().getOrCreate( patientId );
       final List<List<String>> rows = new ArrayList<>();

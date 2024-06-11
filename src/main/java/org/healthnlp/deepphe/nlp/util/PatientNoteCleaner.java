@@ -1,5 +1,6 @@
 package org.healthnlp.deepphe.nlp.util;
 
+import org.apache.ctakes.core.patient.PatientDocCounter;
 import org.apache.ctakes.core.patient.PatientNoteStore;
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
 import org.apache.ctakes.core.util.doc.SourceMetadataUtil;
@@ -26,16 +27,11 @@ public class PatientNoteCleaner extends JCasAnnotator_ImplBase {
    @Override
    public void process( final JCas jCas ) throws AnalysisEngineProcessException {
       final String patientId = SourceMetadataUtil.getPatientIdentifier( jCas );
-      if ( isPatientFull( patientId ) ) {
-         PatientNoteStore.getInstance().removePatient( patientId );
-      }
+       if (PatientDocCounter.getInstance().isPatientFull(patientId)) {
+           PatientNoteStore.getInstance().removePatient(patientId);
+           PatientDocCounter.getInstance().removePatient(patientId);
+       }
    }
 
-   static private boolean isPatientFull( final String patientId ) {
-      final int wantedDocCount = PatientNoteStore.getInstance()
-                                                 .getWantedDocCount( patientId );
-      final int storedDocCount = PatientNoteStore.getInstance().getStoredDocCount( patientId );
-      return storedDocCount >= wantedDocCount;
-   }
 
 }

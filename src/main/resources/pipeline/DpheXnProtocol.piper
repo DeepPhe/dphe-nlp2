@@ -134,8 +134,8 @@ add MelanomaDocEpisodeTagger
 // Putting the LogFileWriter here allows us to have summary log info in the last doc log.
 //add LogFileWriter SubDirectory=LOG
 
-// Need to put patient notes into the PatientStore for the ProtocolWriter
-add PatientNoteCollector
+// Need to increment count of patient notes for the ProtocolWriter
+add DocComplete
 
 add ProtocolWriter
 

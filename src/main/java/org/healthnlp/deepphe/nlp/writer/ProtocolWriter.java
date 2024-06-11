@@ -1,7 +1,7 @@
 package org.healthnlp.deepphe.nlp.writer;
 
 import org.apache.ctakes.core.cc.AbstractJCasFileWriter;
-import org.apache.ctakes.core.patient.PatientNoteStore;
+import org.apache.ctakes.core.patient.PatientDocCounter;
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
 import org.apache.ctakes.core.util.AeParamUtil;
 import org.apache.ctakes.core.util.annotation.IdentifiedAnnotationUtil;
@@ -511,7 +511,7 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
          _patientRow = new PatientRow( patientId );
       }
       _patientRow.addCasInfo( jCas );
-      if ( !isPatientFull( patientId ) ) {
+      if (!PatientDocCounter.getInstance().isPatientFull(patientId)) {
          return;
       }
       writePatientRow();
@@ -578,16 +578,6 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
       if ( !protocolFile.delete() ) {
          LOGGER.warn( "Could not delete " + protocolFile.getAbsolutePath() );
       }
-   }
-
-   // TODO move to ctakes PatientNoteStore
-   static private boolean isPatientFull( final String patientId ) {
-      // Even though the ctakes PatientNoteStore isn't being used to store any patient jcas,
-      // it still has note counts as they should be set by a collection reader.
-      final int wantedDocCount = PatientNoteStore.getInstance()
-                                                 .getWantedDocCount( patientId );
-      final int storedDocCount = PatientNoteStore.getInstance().getStoredDocCount( patientId );
-      return storedDocCount >= wantedDocCount;
    }
 
    private Collection<String> getUris( final Collection<IdentifiedAnnotation> annotations ) {

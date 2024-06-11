@@ -1,6 +1,7 @@
 package org.healthnlp.deepphe.nlp.writer;
 
 import org.apache.ctakes.core.cc.AbstractFileWriter;
+import org.apache.ctakes.core.patient.PatientDocCounter;
 import org.apache.ctakes.core.util.AeParamUtil;
 import org.apache.ctakes.core.util.StringUtil;
 import org.apache.ctakes.core.util.doc.SourceMetadataUtil;
@@ -11,7 +12,6 @@ import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.resource.ResourceInitializationException;
 import org.healthnlp.deepphe.neo4j.node.xn.*;
-import org.healthnlp.deepphe.nlp.patient.PatientCasUtil;
 import org.healthnlp.deepphe.nlp.patient.PatientSummaryXnStore;
 import org.healthnlp.deepphe.nlp.uri.UriInfoCache;
 
@@ -123,10 +123,10 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
    @Override
    protected void createData( final JCas jCas ) {
       final String patientId = SourceMetadataUtil.getPatientIdentifier( jCas );
-      if ( !PatientCasUtil.isPatientFull( patientId ) ) {
-         _patientSummary = null;
-         return;
-      }
+       if (!PatientDocCounter.getInstance().isPatientFull(patientId)) {
+           _patientSummary = null;
+           return;
+       }
       _patientSummary = PatientSummaryXnStore.getInstance().get( patientId );
    }
 
@@ -177,9 +177,9 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
          return;
       }
       final String patientId = patientSummary.getId();
-      if ( !PatientCasUtil.isPatientFull( patientId ) ) {
-         return;
-      }
+       if (!PatientDocCounter.getInstance().isPatientFull(patientId)) {
+           return;
+       }
       final String cancerRows = compileCancers( patientSummary );
       final String tumorRows = compileTumors( patientSummary );
       // Not working with append

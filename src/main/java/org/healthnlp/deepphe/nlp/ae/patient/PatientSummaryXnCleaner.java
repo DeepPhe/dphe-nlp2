@@ -1,12 +1,12 @@
 package org.healthnlp.deepphe.nlp.ae.patient;
 
+import org.apache.ctakes.core.patient.PatientDocCounter;
 import org.apache.ctakes.core.pipeline.PipeBitInfo;
 import org.apache.ctakes.core.util.doc.SourceMetadataUtil;
 import org.apache.log4j.Logger;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
 import org.apache.uima.jcas.JCas;
-import org.healthnlp.deepphe.nlp.patient.PatientCasUtil;
 import org.healthnlp.deepphe.nlp.patient.PatientSummaryXnStore;
 import org.healthnlp.deepphe.nlp.uri.UriInfoCache;
 
@@ -34,10 +34,10 @@ public class PatientSummaryXnCleaner extends JCasAnnotator_ImplBase {
    @Override
    public void process( final JCas jCas ) throws AnalysisEngineProcessException {
       final String patientId = SourceMetadataUtil.getPatientIdentifier( jCas );
-      if ( PatientCasUtil.isPatientFull( patientId ) ) {
-         PatientSummaryXnStore.getInstance().remove( patientId );
-         UriInfoCache.getInstance().clear();
-      }
+       if (PatientDocCounter.getInstance().isPatientFull(patientId)) {
+           PatientSummaryXnStore.getInstance().remove(patientId);
+           UriInfoCache.getInstance().clear();
+       }
    }
 
    /**

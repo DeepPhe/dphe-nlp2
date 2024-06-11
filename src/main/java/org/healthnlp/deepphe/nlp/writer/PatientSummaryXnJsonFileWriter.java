@@ -3,13 +3,13 @@ package org.healthnlp.deepphe.nlp.writer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.ctakes.core.cc.AbstractFileWriter;
+import org.apache.ctakes.core.patient.PatientDocCounter;
 import org.apache.ctakes.core.util.AeParamUtil;
 import org.apache.ctakes.core.util.doc.SourceMetadataUtil;
 import org.apache.log4j.Logger;
 import org.apache.uima.fit.descriptor.ConfigurationParameter;
 import org.apache.uima.jcas.JCas;
 import org.healthnlp.deepphe.neo4j.node.xn.*;
-import org.healthnlp.deepphe.nlp.patient.PatientCasUtil;
 import org.healthnlp.deepphe.nlp.patient.PatientSummaryXnStore;
 
 import java.io.*;
@@ -163,10 +163,10 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
    @Override
    protected void createData( final JCas jCas ) {
       final String patientId = SourceMetadataUtil.getPatientIdentifier( jCas );
-      if ( !PatientCasUtil.isPatientFull( patientId ) ) {
-         _patientSummary = null;
-         return;
-      }
+       if (!PatientDocCounter.getInstance().isPatientFull(patientId)) {
+           _patientSummary = null;
+           return;
+       }
       _patientSummary = PatientSummaryXnStore.getInstance().get( patientId );
    }
 
@@ -227,17 +227,17 @@ final public class PatientSummaryXnJsonFileWriter extends AbstractFileWriter<Pat
          return;
       }
       final String patientId = patientSummary.getId();
-      if ( !PatientCasUtil.isPatientFull( patientId ) ) {
-         return;
-      }
-      if ( _zipMax > 0 ) {
-         // Increase the zip count here, not at the file level!
-         _zipCount++;
-         if ( _zipCount > _zipMax ) {
-            _zipCount = 1;
-            _zipIndex++;
-         }
-      }
+       if (!PatientDocCounter.getInstance().isPatientFull(patientId)) {
+           return;
+       }
+       if (_zipMax > 0) {
+           // Increase the zip count here, not at the file level!
+           _zipCount++;
+           if (_zipCount > _zipMax) {
+               _zipCount = 1;
+               _zipIndex++;
+           }
+       }
       final GsonBuilder gsonBuilder = new GsonBuilder().serializeSpecialFloatingPointValues();
       if ( AeParamUtil.isTrue( _prettyPrint ) ) {
          gsonBuilder.setPrettyPrinting();
