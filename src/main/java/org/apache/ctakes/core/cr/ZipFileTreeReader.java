@@ -23,6 +23,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -41,6 +42,8 @@ import java.util.zip.ZipFile;
 )
 public class ZipFileTreeReader extends AbstractFileTreeReader {
    static private final Logger LOGGER = Logger.getLogger( "ZipFileTreeReader" );
+
+   private final ZoneId ZONE_ID = ZoneId.systemDefault();
 
 
    // TODO add standard parameter names and descriptions to the list that contains "InputDir" and "OutputDir"
@@ -544,6 +547,15 @@ public class ZipFileTreeReader extends AbstractFileTreeReader {
       return new SimpleDateFormat( _casDateFormat );
    }
 
+
+   protected String createDocumentTime( final LocalDate date ) {
+      return _casDateFormatter.format( date );
+   }
+
+   protected String createDocumentTime( final LocalDateTime dateTime ) {
+      return _casDateFormatter.format( dateTime );
+   }
+
    /**
     * @param millis -
     * @return the file's last modification date as a string : {@link #getDateFormat()}
@@ -553,7 +565,7 @@ public class ZipFileTreeReader extends AbstractFileTreeReader {
 //      _dateFormatter = DateTimeFormatter.ofPattern( _dateFormat );
 //      return _dateFormatter.format(
       return _casDateFormatter.format(
-            LocalDateTime.ofInstant( Instant.ofEpochMilli( millis ), ZoneId.systemDefault() ) );
+            LocalDateTime.ofInstant( Instant.ofEpochMilli( millis ), ZONE_ID ) );
    }
 
 

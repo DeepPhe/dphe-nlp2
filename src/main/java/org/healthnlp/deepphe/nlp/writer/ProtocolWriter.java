@@ -529,7 +529,6 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
 
    private void writePatientRow() throws IOException {
       LOGGER.info( "Writing Patient " + _patientRow._patientId );
-      LOGGER.info( _patientRow.getRow() );
       final File protocolFile = new File( getRootDirectory(), getFileName() );
       try ( Writer writer = new BufferedWriter( new FileWriter( protocolFile, true ) ) ) {
          writer.append( _patientRow.getRow() );

@@ -1,11 +1,10 @@
 package org.healthnlp.deepphe.nlp.util;
 
 import org.apache.ctakes.core.util.StringUtil;
+import org.eclipse.collections.impl.bag.mutable.HashBag;
 
 import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -54,6 +53,9 @@ final public class VumcPatientSorter {
       return dateTime.substring( 0, timeSplit );
    }
 
+
+   static private final Collection<String> _usedFilenames = new HashSet<>( 300000 );
+
    static private String getCategory( final String[] splits ) {
       final String source = splits[ 2 ];
       if ( source.isEmpty() ) {
@@ -75,6 +77,18 @@ final public class VumcPatientSorter {
       for ( char c : BAD_CHARS ) {
          join = join.replace( c, '_' );
       }
+      if ( _usedFilenames.contains( join ) ) {
+         for ( int i=1; i<100; i++ ) {
+            join = encounter + "-" + i + "-" + category + "-" + date + ".txt";
+            for ( char c : BAD_CHARS ) {
+               join = join.replace( c, '_' );
+            }
+            if ( !_usedFilenames.contains( join ) ) {
+               break;
+            }
+         }
+      }
+      _usedFilenames.add( join );
       return join;
    }
 

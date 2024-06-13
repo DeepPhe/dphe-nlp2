@@ -37,7 +37,7 @@ set MinAttributeConfidence=0.3
 // Receptor Status, Test Results, Biomarkers, Lymph Involvement, Metastatic Site,
 // Treatments, Procedures, Genes, Comorbidities
 set MinOptAttributes=1
-set MaxOptAttributes=100
+set MaxOptAttributes=10
 set MinOptAttributeConfidence=0.2
 
 // Concept settings apply to the whole patient, per semantic group.

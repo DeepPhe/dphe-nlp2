@@ -5,6 +5,6 @@ set ZipJson=yes
 set ZipMax=1000
 
 // Place table output in zip files.  The last table file will not be zipped (future fix).
-set ZipTable=no
+set ZipTable=yes
 
 set PatientMax=1000
