@@ -66,7 +66,11 @@ add GeneTableWriter
 add GeneTableWriter TableType=HTML
 add SpanTableWriter
 
+// Need to increment count of patient notes for the ProtocolWriter
+add DocComplete
+
 add UriInfoCacheCleaner CleanAtDoc=yes
+add PatientNoteCleaner
 
 addLast FinishedLogger
 addLast ExitForcer

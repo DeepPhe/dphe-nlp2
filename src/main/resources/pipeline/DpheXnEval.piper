@@ -15,6 +15,7 @@ package org.healthnlp.deepphe.nlp.ae.patient
 package org.healthnlp.deepphe.nlp.ae.relation
 package org.healthnlp.deepphe.nlp.ae.section
 package org.healthnlp.deepphe.nlp.writer
+package org.healthnlp.deepphe.nlp.util
 
 // New settings for cased ner.
 set Dictionaries=deepphe_2023_v1
@@ -161,6 +162,8 @@ add MelanomaDocEpisodeTagger
 //add DpheRelTableWriter SubDirectory=REL TableType=HTML
 //add pretty.plaintext.PrettyTextWriterFit SubDirectory=TEXT
 
+// Need to increment count of patient notes for the ProtocolWriter
+add DocComplete
 
 add PatientCasCollector
 
@@ -198,8 +201,10 @@ add PatientSummaryXnJsonFileWriter SubDirectory=JSON
 
 
 // Anything that needs to use the patient cas or the patient summary node need to be here!
-add PatientCasCleaner
 add PatientSummaryXnCleaner
+add UriInfoCacheCleaner
+add PatientCasCleaner
+add PatientNoteCleaner
 
 //  Alert User that the pipeline is Finished.
 //addLast Neo4jServerShutdownAe

@@ -142,8 +142,10 @@ add DocComplete
 add ProtocolWriter
 add PidListWriter
 
-add UriInfoCacheCleaner
+add UriInfoCacheCleaner CleanAfterDoc=yes
+add PatientCasCleaner
 add PatientNoteCleaner
+
 
 addLast FinishedLogger
 addLast ExitForcer
