@@ -50,7 +50,7 @@ public class TnmNormalizer extends DefaultXnAttributeNormalizer {
          }
       }
       final char num = normal.charAt( 0 );
-      if ( num == 0 || num == '1' || num == '2' || num == '3' || num == '4' ) {
+      if ( num == '0' || num == '1' || num == '2' || num == '3' || num == '4' ) {
          return normal.substring( 0,1 );
       }
       return normal;
