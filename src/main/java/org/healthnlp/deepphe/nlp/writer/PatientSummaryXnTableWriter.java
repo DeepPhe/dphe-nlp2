@@ -62,7 +62,7 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
    private int _patientMax = 0;
 
    static private final List<String> CANCER_ATTRIBUTES = Arrays.asList(
-//         "Location",
+         "Location",
          "Topography, major", "Topography, minor", "Laterality",
          "Lymph Involvement", "Metastatic Site", "Histology", "Grade", "Stage",
          "T Stage", "N Stage", "M Stage", "Course", "Test Results",
@@ -70,7 +70,7 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
    );
 
    static private final List<String> TUMOR_ATTRIBUTES = Arrays.asList(
-//         "Location",
+         "Location",
          "Topography, major", "Topography, minor", "Laterality",
          "Clockface", "Quadrant", "Grade", "Tissue", "Behavior", "Receptor Status",
          "Test Results"
@@ -261,8 +261,8 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
             continue;
          }
          sb.append( patientId ).append( '|' ).append( tumor.getId() ).append( '|' )
-//           .append( UriInfoCache.getInstance().getPrefText( tumor.getClassUri() ) )
-           .append( UriInfoCache.getInstance().getCui( tumor.getClassUri() ) )
+           .append( UriInfoCache.getInstance().getPrefText( tumor.getClassUri() ) )
+//           .append( UriInfoCache.getInstance().getCui( tumor.getClassUri() ) )
            .append( ':' ).append( tumor.getConfidence() ).append( '|' );
          sb.append( attributesText ).append( "\n" );
       }
@@ -308,8 +308,8 @@ final public class PatientSummaryXnTableWriter extends AbstractFileWriter<Patien
                      val = "";
                   }
                   sb
-//                        .append( prefText )
-                    .append( UriInfoCache.getInstance().getCui( uri ) )
+                        .append( prefText )
+//                    .append( UriInfoCache.getInstance().getCui( uri ) )
                     .append( '=' ).append( val )
                     .append( ':' ).append( value.getConfidence() ).append( ';' );
                }

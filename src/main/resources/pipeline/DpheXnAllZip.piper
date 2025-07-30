@@ -29,9 +29,10 @@ set deepphe_2023_v1_type=JDBC
 set GraphDb=C:/Spiffy/output/mark_6_onto/test_runs/neo4j/DeepPhe_2023_v1.db
 
 set PrettyPrint=yes
-load pipeline/SmallJsonPrefs
-load pipeline/ZipPrefs
-load pipeline/InfoLimits
+//load pipeline/SmallJsonPrefs
+//load pipeline/ZipPrefs
+//load pipeline/InfoLimits
+load pipeline/MoreInfoLimits
 
 //reader ZipFileTreeReader
 
@@ -218,7 +219,8 @@ add UabRecurrenceTableWriter SubDirectory=UAB_RECUR TableType=HTML
 
 // Anything that needs to use the patient cas or the patient summary node need to be here!
 add PatientSummaryXnCleaner
-add UriInfoCacheCleaner
+//add UriInfoCacheCleaner CleanAfterDoc=yes
+add UriInfoCacheCleaner CleanAfterDoc=no
 // Always clear the patient cas last as other cleaners may rely upon the count there.
 add PatientCasCleaner
 add PatientNoteCleaner

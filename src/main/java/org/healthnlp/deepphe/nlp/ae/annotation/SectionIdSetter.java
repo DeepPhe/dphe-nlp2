@@ -12,6 +12,7 @@ import org.healthnlp.deepphe.nlp.section.DefinedSectionType;
 
 import java.lang.invoke.MethodHandles;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**

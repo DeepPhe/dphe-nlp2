@@ -42,7 +42,7 @@ final public class LonerNegator2 extends JCasAnnotator_ImplBase {
          final Collection<IdentifiedAnnotation> masses
                = mentions.stream()
                          .filter( LonerNegator2::isMassOrCancer )
-                         .collect( Collectors.toList() );
+                         .collect( Collectors.toList());
          if ( masses.size() <= 1 || masses.size() > 4 ) {
             continue;
          }

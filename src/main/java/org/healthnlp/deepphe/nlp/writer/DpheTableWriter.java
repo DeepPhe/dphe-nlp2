@@ -65,10 +65,14 @@ public class DpheTableWriter extends AbstractTableFileWriter {
       for ( IdentifiedAnnotation annotation : annotationSectionMap.keySet() ) {
          final String uri = IdentifiedAnnotationUtil.getCodes( annotation, Neo4jConstants.DPHE_CODING_SCHEME )
                                        .stream().findFirst().orElse( "" );
-         final DpheGroup group = UriInfoCache.getInstance().getDpheGroup( uri );
-         if ( group == DpheGroup.UNKNOWN ) {
-            LogFileWriter.add( "DpheTableWriter no group for " + uri );
+         if ( uri.isEmpty() ) {
+            LogFileWriter.add( "DpheTableWriter no uri for text: " + annotation.getCoveredText() );
+            continue;
          }
+         final DpheGroup group = UriInfoCache.getInstance().getDpheGroup( uri );
+//         if ( group == DpheGroup.UNKNOWN ) {
+//            LogFileWriter.add( "DpheTableWriter no group for " + uri + " , " + annotation.getCoveredText() );
+//         }
          if ( group != DpheGroup.UNKNOWN ) {
             infos.add( new AnnotationInfo( annotationSectionMap.get( annotation ), annotation, uri, group ) );
          }

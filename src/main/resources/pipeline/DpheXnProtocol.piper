@@ -21,12 +21,15 @@ package org.healthnlp.deepphe.nlp.util
 // New settings for cased ner.
 set Dictionaries=deepphe_2023_v1
 //set deepphe_2023_v1_url=jdbc:hsqldb:file:resources/hsqldb/DeepPhe_2023_v1/DeepPhe_2023_v1
-set deepphe_2023_v1_url=jdbc:hsqldb:file:C:/spiffy/ontology/hsqldb/DeepPhe_2023_v1/DeepPhe_2023_v1
+//set deepphe_2023_v1_url=jdbc:hsqldb:file:C:/spiffy/ontology/hsqldb/DeepPhe_2023_v1/DeepPhe_2023_v1
+set deepphe_2023_v1_url=jdbc:hsqldb:file:C:\Spiffy\output\mark_6_onto\test_runs\hsqldb\DeepPhe_2023_v1/DeepPhe_2023_v1
 set Detailers=deepphe_2023_v1
 set deepphe_2023_v1_type=JDBC
 
 //set GraphDb=resources/neo4j/DeepPhe_2023_v1.db
-set GraphDb=C:/spiffy/ontology/neo4j/DeepPhe_2023_v1.db
+//set GraphDb=C:/spiffy/ontology/neo4j/DeepPhe_2023_v1.db
+set GraphDb=C:\Spiffy\output\mark_6_onto\test_runs\neo4j/DeepPhe_2023_v1.db
+
 
 set PrettyPrint=yes
 load pipeline/SmallJsonPrefs
@@ -34,8 +37,8 @@ load pipeline/ZipPrefs
 load pipeline/InfoLimits
 
 //reader ZipFileTreeReader
-reader VumcZipReader
-
+//reader VumcZipReader
+set CasDateFormat="yyyy-MM-dd kk:mm:ss"
 
 // Connect to local ontology graph embedded db.
 add Neo4jEmbeddedConnectAe
@@ -141,6 +144,8 @@ add DocComplete
 
 add ProtocolWriter
 add PidListWriter
+
+add pretty.plaintext.PrettyTextWriterFit SubDirectory=TEXT
 
 add UriInfoCacheCleaner CleanAfterDoc=yes
 add PatientCasCleaner

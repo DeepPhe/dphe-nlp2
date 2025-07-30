@@ -8,6 +8,7 @@ import org.healthnlp.deepphe.nlp.ae.patient.PatientSummarizer;
 import org.healthnlp.deepphe.nlp.attribute.biomarker.BiomarkerInfoCollector;
 import org.healthnlp.deepphe.nlp.attribute.biomarker.BiomarkerNormalizer;
 import org.healthnlp.deepphe.nlp.attribute.grade.GradeNormalizer;
+import org.healthnlp.deepphe.nlp.attribute.stage.StageNormalizer;
 import org.healthnlp.deepphe.nlp.attribute.histology.HistologyNormalizer;
 import org.healthnlp.deepphe.nlp.attribute.tnm.TnmNormalizer;
 import org.healthnlp.deepphe.nlp.attribute.topo_major.TopoMajorNormalizer;
@@ -151,10 +152,12 @@ final public class NeoplasmAttributesCreator {
       attributes.add( getAttribute( "Histology", cancer, patientId, patientTime,
             DefaultInfoCollector::new, HistologyNormalizer::new, dependencies, mentionCount ) );
       attributes.add( getAttribute( "Grade", cancer, patientId, patientTime,
-            DefaultInfoCollector::new, PrefTextNormalizer::new, dependencies, mentionCount,
+//            DefaultInfoCollector::new, PrefTextNormalizer::new, dependencies, mentionCount,
+            DefaultInfoCollector::new, GradeNormalizer::new, dependencies, mentionCount,
             RelationConstants.HAS_GRADE_XN, RelationConstants.HAS_GLEASON_GRADE ) );
       attributes.add( getAttribute( "Stage", cancer, patientId, patientTime,
-            DefaultInfoCollector::new, PrefTextNormalizer::new, dependencies, mentionCount,
+//            DefaultInfoCollector::new, PrefTextNormalizer::new, dependencies, mentionCount,
+            DefaultInfoCollector::new, StageNormalizer::new, dependencies, mentionCount,
             RelationConstants.HAS_STAGE_XN ) );
       // extent   - covered by behavior and T (from TNM)
       attributes.add( getAttribute( "T Stage", cancer, patientId, patientTime,

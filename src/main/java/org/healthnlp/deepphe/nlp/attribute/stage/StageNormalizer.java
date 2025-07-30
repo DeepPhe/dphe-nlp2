@@ -99,10 +99,65 @@ public class StageNormalizer extends DefaultXnAttributeNormalizer {
       EXACT_URIS.put( "StagingIncomplete", "Unknown" );
    }
 
+   static private final Map<String,String> ROUGH_URIS = new HashMap<>();
+   static {
+      ROUGH_URIS.put( "Stage0", "0" );
+      ROUGH_URIS.put( "Stage0a", "0" );
+      ROUGH_URIS.put( "Stage0is", "0" );
+      ROUGH_URIS.put( "InSitu", "0" );
+      ROUGH_URIS.put( "StageIs", "0" );
+
+      ROUGH_URIS.put( "StageI", "I" );
+      ROUGH_URIS.put( "StageIA", "I" );
+      ROUGH_URIS.put( "StageIA1", "I" );
+      ROUGH_URIS.put( "StageIA2", "I" );
+      ROUGH_URIS.put( "StageIA3", "I" );
+      ROUGH_URIS.put( "StageIB", "I" );
+      ROUGH_URIS.put( "StageIB1", "I" );
+      ROUGH_URIS.put( "StageIB2", "I" );
+      ROUGH_URIS.put( "StageIB3", "I" );
+      ROUGH_URIS.put( "StageIC", "I" );
+
+      ROUGH_URIS.put( "StageII", "II" );
+      ROUGH_URIS.put( "StageIIA", "II" );
+      ROUGH_URIS.put( "StageIIA1", "II" );
+      ROUGH_URIS.put( "StageIIA2", "II" );
+      ROUGH_URIS.put( "StageIIB", "II" );
+      ROUGH_URIS.put( "StageIIC", "II" );
+      // Stage 2E is special for Non-Hodgkin Lymphoma
+      ROUGH_URIS.put( "StageIIE", "II" );
+
+      ROUGH_URIS.put( "StageIII", "III" );
+      ROUGH_URIS.put( "LocallyMetastatic", "III" );
+      ROUGH_URIS.put( "StageIIIA", "III" );
+      ROUGH_URIS.put( "StageIIIA1", "III" );
+      ROUGH_URIS.put( "StageIIIA2", "III" );
+      ROUGH_URIS.put( "StageIIIB", "III" );
+      ROUGH_URIS.put( "StageIIIC", "III" );
+      ROUGH_URIS.put( "StageIIIC1", "III" );
+      ROUGH_URIS.put( "StageIIIC2", "III" );
+
+      ROUGH_URIS.put( "StageIV", "IV" );
+      ROUGH_URIS.put( "Metastatic", "IV" );
+      ROUGH_URIS.put( "DistantlyMetastatic", "IV" );
+      ROUGH_URIS.put( "AdvancedStage", "IV" );
+      ROUGH_URIS.put( "StageIVA", "IV" );
+      ROUGH_URIS.put( "StageIVA1", "IV" );
+      ROUGH_URIS.put( "StageIVA2", "IV" );
+      ROUGH_URIS.put( "StageIVB", "IV" );
+      ROUGH_URIS.put( "StageIVC", "IV" );
+
+      ROUGH_URIS.put( "StageX", "Unknown" );
+      ROUGH_URIS.put( "StageUnknown", "Unknown" );
+      ROUGH_URIS.put( "StageUnspecified", "Unknown" );
+      ROUGH_URIS.put( "StagingIncomplete", "Unknown" );
+   }
+
 
    public String getNormalValue( final UriConcept concept ) {
       final String uri = concept.getUri();
-      return EXACT_URIS.getOrDefault( uri, "" );
+//      return EXACT_URIS.getOrDefault( uri, "" );
+      return ROUGH_URIS.getOrDefault( uri, "" );
    }
 
    static private final List<String> SORT_LIST = Arrays.asList(

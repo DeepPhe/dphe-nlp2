@@ -25,7 +25,6 @@ import org.healthnlp.deepphe.nlp.neo4j.Neo4jOntologyConceptUtil;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
@@ -272,7 +271,8 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
       super.initialize( context );
       _casDateFormatter = DateTimeFormatter.ofPattern( _casDateFormat );
       _dateWriteFormatter = DateTimeFormatter.ofPattern( _dateWriteFormat );
-      _runStartTime = _casDateFormatter.format( OffsetDateTime.now() );
+//      _runStartTime = _casDateFormatter.format( OffsetDateTime.now() );
+      _runStartTime = "Feb_02_06";
       _brCaUris.addAll( Neo4jOntologyConceptUtil.getBranchUris( "BreastNeoplasm" ) );
       _ovCaUris.addAll( Neo4jOntologyConceptUtil.getBranchUris( "OvarianNeoplasm" ) );
       _skinCaUris.addAll( Neo4jOntologyConceptUtil.getBranchUris( "SkinNeoplasm" ) );
@@ -853,12 +853,15 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
       mel_ulcer
    }
 
+   //   TODO: For Melanoma add BRAF, NRAS, KIT, CTTNB1, GNA11, GNAQ and NF1   See 7.5 of incomplete protocol.
+
 
    public enum CATEGORY_TITLE {
       ca_other,
       ca_hist_emr_brca, ca_hist_emr_ovca,
       ca_stage_sum, ca_grade_emr, ecog, mel_stage, mel_type, mel_hist, cut_mel_site, mel_met,
-      ER, PR, HER2, BRCA1, BRCA2, PIK3CA, TP53
+      ER, PR, HER2, BRCA1, BRCA2, PIK3CA, TP53,
+      BRAF, NRAS, KIT, CTTNB1, GNA11, GNAQ, NF1
    }
 
    private String getHeader() {
@@ -984,6 +987,24 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
          if ( values.isEmpty() ) {
             return;
          }
+         // Positive, Negative, Elevated, Unknown, Equivocal, Not Assessed ...
+         // ... Assessed, Can Assess, Will Assess, Will Not Assess, NO VALUE.
+         if ( values.contains( "Can Assess" ) ) {
+            values.remove( "Can Assess" );
+            values.add( "Not Assessed" );
+         }
+         if ( values.contains( "Will Assess" ) ) {
+            values.remove( "Will Assess" );
+            values.add( "Not Assessed" );
+         }
+         if ( values.contains( "Will Not Assess" ) ) {
+            values.remove( "Will Not Assess" );
+            values.add( "Not Assessed" );
+         }
+         values.remove( "NO_VALUE" );
+         if ( values.isEmpty() ) {
+            return;
+         }
          _categoryInfoMap.computeIfAbsent( title, v -> new CategoryInfo() )
                          .update( docDate, episode, values );
       }
@@ -1055,6 +1076,19 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
          updateBiomarker( PIK3CA, docDate, episode, geneProducts,
                "Phosphatidylinositol4_cma_5_sub_Bisphosphate3_sub_KinaseCatalyticSubunitAlphaIsoform" );
          updateBiomarker( TP53, docDate, episode, geneProducts, "CellularTumorAntigenP53" );
+
+         //   TODO: For Melanoma add BRAF, NRAS, KIT, CTTNB1, GNA11, GNAQ and NF1   See 7.5 of incomplete protocol.
+         updateBiomarker( BRAF, docDate, episode, geneProducts, "Serine_sl_Threonine_sub_ProteinKinaseB_sub_Raf" );
+         updateBiomarker( NRAS, docDate, episode, geneProducts, "GTPaseNras" );
+         updateBiomarker( KIT, docDate, episode, geneProducts, "Mast_sl_StemCellGrowthFactorReceptorKit" );
+         updateBiomarker( CTTNB1, docDate, episode, geneProducts, "CateninBeta_sub_1" );
+         updateBiomarker( GNA11, docDate, episode, geneProducts,
+               "GuanineNucleotide_sub_BindingProteinSubunitAlpha_sub_11" );
+         updateBiomarker( GNAQ, docDate, episode, geneProducts,
+               "GuanineNucleotide_sub_BindingProteinG_lpn_q_rpn_SubunitAlpha" );
+         updateBiomarker( NF1, docDate, episode, geneProducts, "Neurofibromin" );
+
+
          _smokingStatus.update( docDate, episode, SMOKING_STATUS.getSmokingStatus( jCas ) );
       }
 

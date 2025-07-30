@@ -28,7 +28,7 @@ public class TnmNormalizer extends DefaultXnAttributeNormalizer {
       if ( uri.isEmpty() || uri.equals( Neo4jConstants.MISSING_NODE_NAME ) ) {
          return "";
       }
-      return uri.replace( "StageFinding", "" )
+      String normal =  uri.replace( "StageFinding", "" )
                     .replace( "_lpn_i_add__rpn_", " (i+)" )
                 .replace( "_lpn_mol_add__rpn_", " (mol+)" )
                 .replace( "_lpn_i_sub__rpn_", " (i-)" )
@@ -37,6 +37,23 @@ public class TnmNormalizer extends DefaultXnAttributeNormalizer {
             .replace( "III", "3" )
             .replace( "II", "2" )
             .replace( "I", "1" );
+      if ( normal.length() > 1 ) {
+         final char pre = normal.charAt( 0 );
+         if ( pre == 'C' || pre == 'P' ) {
+            normal = normal.substring( 1 );
+         }
+      }
+      if ( normal.length() > 1 ) {
+         final char tnm = normal.charAt( 0 );
+         if ( tnm == 'T' || tnm == 'N' || tnm == 'M' ) {
+            normal = normal.substring( 1 );
+         }
+      }
+      final char num = normal.charAt( 0 );
+      if ( num == 0 || num == '1' || num == '2' || num == '3' || num == '4' ) {
+         return normal.substring( 0,1 );
+      }
+      return normal;
    }
 
 

@@ -494,7 +494,8 @@ public class PatientSummarizer extends JCasAnnotator_ImplBase {
                   .filter( a -> !good.contains( a ) )
                   .map( a -> a.getClassUri() + " " + a.getdConfidence() )
 //                               + " " + a.getGroupedConfidence() )
-                  .collect( Collectors.joining( "\n   " )) );
+                  .collect( Collectors.joining( "\n   " ))
+                  + "\n------------ Removed Attributes --------------" );
          }
          return good;
       }
@@ -604,7 +605,8 @@ public class PatientSummarizer extends JCasAnnotator_ImplBase {
                   + sorted.stream().filter( c -> !good.contains( c ) )
                                .map( UriConceptRelation::getTarget )
                           .map( UriConcept::toLongText )
-                          .collect( Collectors.joining( "\n   " )) );
+                          .collect( Collectors.joining( "\n   " ))
+                  + "\n------- Removed TumorRelations -------------" );
          }
          return good;
       }
@@ -730,7 +732,8 @@ public class PatientSummarizer extends JCasAnnotator_ImplBase {
                .stream()
                .filter( a -> !good.contains( a ) )
                .map( UriConcept::toLongText )
-               .collect( Collectors.joining( "\n   " )) );
+               .collect( Collectors.joining( "\n   " ))
+               + "\n-------------- Removed UriConcepts --------------");
       }
       return good;
    }
@@ -767,7 +770,7 @@ public class PatientSummarizer extends JCasAnnotator_ImplBase {
       if ( good.size() < sorted.size() ) {
          LogFileWriter.add( sorted.stream().filter( c -> !good.contains( c ) )
                                   .map( c -> "! PatientSummarizer.trimUriConcepts Removing:\n" + c.toLongText() ).collect(
-               Collectors.joining( "\n   " )) );
+               Collectors.joining( "\n   " )) + "\n--------------- Removed -------------" );
       }
       return good;
    }

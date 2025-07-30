@@ -2,6 +2,7 @@ package org.healthnlp.deepphe.nlp.summary;
 
 import org.apache.ctakes.core.util.IdCounter;
 import org.apache.ctakes.core.util.doc.NoteSpecs;
+import org.apache.ctakes.core.util.doc.SourceMetadataUtil;
 import org.apache.ctakes.typesystem.type.textspan.Episode;
 import org.apache.ctakes.typesystem.type.textspan.Segment;
 import org.apache.uima.fit.util.JCasUtil;
@@ -11,8 +12,15 @@ import org.healthnlp.deepphe.neo4j.node.xn.DocumentXn;
 import org.healthnlp.deepphe.nlp.util.IdCreator;
 import org.neo4j.kernel.impl.store.id.IdContainer;
 
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.apache.ctakes.core.util.doc.SourceMetadataUtil.getOrCreateSourceData;
 
 /**
  * @author SPF , chip-nlp
@@ -23,6 +31,9 @@ final public class DocumentXnCreator {
 
     private DocumentXnCreator() {}
 
+    static private final DateTimeFormatter DATE_TIME_PARSER = DateTimeFormatter.ofPattern( "MMddyyyykkmmss" );
+    static private final DateTimeFormatter DATE_TIME_WRITER = DateTimeFormatter.ofPattern( "yyyyMMddkkmm" );
+    static private final DateTimeFormatter DATE_ONLY_PARSER = DateTimeFormatter.ofPattern( "yyyyMMdd" );
     static private final IdCounter ID_COUNTER = new IdCounter();
     static private final IdCounter SECTION_COUNTER = new IdCounter();
 
@@ -40,7 +51,8 @@ final public class DocumentXnCreator {
         final String fullDocId = IdCreator.createId( patientId, patientTime, "D", ID_COUNTER );
         doc.setId( fullDocId );
         doc.setName( docId );
-        doc.setDate( noteSpecs.getNoteTime() );
+//        doc.setDate( noteSpecs.getNoteTime() );
+        doc.setDate( getDocDateTime( jCas ) );
         doc.setType( getDocType( noteSpecs.getDocumentType() ) );
         doc.setText( noteSpecs.getDocumentText() );
         final String episodeType = JCasUtil.select( jCas, Episode.class ).stream()
@@ -94,6 +106,28 @@ final public class DocumentXnCreator {
         section.setBegin( segment.getBegin() );
         section.setEnd( segment.getEnd() );
         return section;
+    }
+
+    static private String getDocDateTime( final JCas jCas ) {
+        String date_MMddyyyykkmmss = SourceMetadataUtil.getOrCreateSourceData( jCas ).getSourceOriginalDate();
+        if ( date_MMddyyyykkmmss == null || date_MMddyyyykkmmss.isEmpty() ) {
+            return LocalDateTime.now().format( DATE_TIME_WRITER );
+        }
+        if ( date_MMddyyyykkmmss.length() == 8 ) {
+            date_MMddyyyykkmmss = date_MMddyyyykkmmss + "1200";
+        }
+        LocalDateTime dateTime;
+        try {
+            dateTime = LocalDateTime.parse( date_MMddyyyykkmmss, DATE_TIME_PARSER );
+        } catch ( DateTimeParseException dtpE ) {
+            try {
+                final LocalDate date = LocalDate.parse( date_MMddyyyykkmmss, DATE_ONLY_PARSER );
+                dateTime = date.atStartOfDay();
+            } catch ( Exception e ) {
+                return LocalDateTime.now().format( DATE_TIME_WRITER );
+            }
+        }
+        return dateTime.format( DATE_TIME_WRITER );
     }
 
 

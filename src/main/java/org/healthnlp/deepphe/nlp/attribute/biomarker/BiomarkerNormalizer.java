@@ -23,6 +23,10 @@ public class BiomarkerNormalizer extends DefaultXnAttributeNormalizer {
 //      final Collection<String> texts = concept.getCodifications().getOrDefault( DPHE_VALUE_SCHEME, Collections.emptyList() );
 //      return texts.stream().map( NORMAL::getNormal ).distinct().collect( Collectors.joining( ";" ) );
 //      final String value = concept.getValue();
+      final Collection<String> values = getNormalValues( concept.getValue() );
+      if ( values.contains( "Positive" ) ) {
+         return "Positive";
+      }
       return String.join( ";", getNormalValues( concept.getValue() ) );
 //      final Collection<String> normals = Arrays.stream( StringUtil.fastSplit( value, ';' ) )
 //                                               .map( NORMAL::getNormal )
@@ -42,17 +46,33 @@ public class BiomarkerNormalizer extends DefaultXnAttributeNormalizer {
 
    static public Collection<String> getNormalValues( final String value ) {
       final Collection<String> normals = Arrays.stream( StringUtil.fastSplit( value, ';' ) )
+                                               .map( String::toLowerCase )
                                                .map( NORMAL::getNormal )
                                                .filter( n -> !n.isEmpty() )
                                                .collect( Collectors.toSet() );
       if ( normals.size() > 1 ) {
-         normals.remove( "Unknown" );
+         normals.remove( "NO_VALUE" );
+      }
+      if ( normals.size() > 1 ) {
+         normals.remove( "Possible" );
+      }
+      if ( normals.size() > 1 ) {
+         normals.remove( "Will Not Assess" );
       }
       if ( normals.size() > 1 ) {
          normals.remove( "Not Assessed" );
       }
       if ( normals.size() > 1 ) {
-         normals.remove( "applicable" );
+         normals.remove( "Can Assess" );
+      }
+      if ( normals.size() > 1 ) {
+         normals.remove( "Will Assess" );
+      }
+      if ( normals.size() > 1 ) {
+         normals.remove( "Assessed" );
+      }
+      if ( normals.size() > 1 ) {
+         normals.remove( "Unknown" );
       }
       return normals;
    }
@@ -152,13 +172,38 @@ public class BiomarkerNormalizer extends DefaultXnAttributeNormalizer {
 //   }
 
    private enum NORMAL {
-      Positive( "+", "pos", "positive", "positivity", "express", "overexpression", "3+" ),
-      Negative( "-", "neg", "negative", "unamplified", "not amplified", "non detected", "non-detected",
-                "not express", "0", "1+" ),
+      Negative( "neg", "negative", "unamplified", "not amplified",
+            "not detect", "non detected", "non-detected", "none detected", "not identif", "none identif",
+            "no rearrangement", "no deleterious", "not possible", "no possibility",
+            "no mutation", "no variant", "no pathogenic", "no expression", "no amplif", "not amplif", "not present",
+            "no present", "no express", "not noted",
+            "not express", "0", "1+", "+1", "absent", "wildtype", "wild type", "wild-type", "wild - type", "wt",
+            "does not have", "w/o", "4 or less" ),
+      Can_Assess( "can assess", "can test", "meets criteria", "meets the current nccn criteria",
+            "granted", "approved", "candidate", "applicable",
+            "qualifies", "possibility", "possibl", "meets testing guidelines", "option", "recommend" ),
+      Unknown( "unknown", "indeterminate", "undetermined", "suspicious", "not known",
+            "not conclusive", "inconclusive" ),
+      Positive( "pos", "positive", "positivity", "express", "expressed", "expression", "overexpression", "3+",
+            "+3", "6 or greater", "present", "detected", "noted", "mutation", "carrier", "w/"),
       Elevated( "rising", "increasing", "elevated", "elvtd", "raised", "increased", "strong", "amplified" ),
-      Unknown( "unknown", "indeterminate" ),
-      Equivocal( "equivocal", "borderline", "2+" ),
-      Not_Assessed( "not assessed", "not requested", "not applicable", "insufficient", "pending", "n/a" );
+      Equivocal( "equivocal", "borderline", "2+", "+2" ),
+      Not_Assessed("not assess", "n't assess", "not be assess", "not been assess",
+            "not test", "n't test", "not be test", "not been test",
+            "not evaluat", "n't evaluate", "not be evaluat",  "not been evaluat",
+            "not request", "n't request", "not be request", "not been request",
+            "not interest", "no interest", "uninterested",
+            "not want", "doesn't want", "has not had",
+            "insufficient", "not sufficient","not qualif", "denied", "declined", "not meet criteria",
+            "not applicable", "n/a", "n / a", "discussed testing",
+            "pending", "inquir", "motivated to pursue", "interested", "wants", " if " ),
+      Will_Assess( "will assess", "will be assess", "will test", "will be test", "will be analyzed",
+            "will evaluate", "will be evaluat", "will be completed",
+            "set up for", "sample obtained", "obtained sample" ),
+      Assessed( "assessed", "tested", "evaluated", "status", "analysis", "assessment", "level",  "result" ),
+      // "test",
+      NO_VALUE();
+
 
       private final Collection<String> _text;
       NORMAL( final String ... text ) {
@@ -169,14 +214,25 @@ public class BiomarkerNormalizer extends DefaultXnAttributeNormalizer {
             return "";
          }
          for ( NORMAL normal : values() ) {
-            if ( normal._text.contains( text ) ) {
-               return normal.name().replace( '_', ' ' );
+            for ( String norm : normal._text ) {
+               if ( text.contains( norm ) ) {
+                  if ( normal == Positive && text.startsWith( "no " ) ) {
+                     return "Negative";
+                  }
+                  return normal.name().replace( '_', ' ' );
+               }
             }
+         }
+         if ( text.endsWith( "+" ) ) {
+            return Positive.name();
+         }
+         if ( text.endsWith( "-" ) ) {
+            return Negative.name();
          }
          if ( text.startsWith( "no " ) && text.endsWith( " detected" ) ) {
             return Negative.name();
          }
-         return text;
+         return NO_VALUE.name();
       }
    }
 

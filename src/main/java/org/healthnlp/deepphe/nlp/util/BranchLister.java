@@ -18,7 +18,7 @@ final public class BranchLister {
 
 //   static  private final String ROOT_WORD = "Non-Neoplastic Eye Disorder";
 //   static private final String ROOT_URI  = "Non_NeoplasticEyeDisorder";
-static private final String ROOT_WORD = "";
+static private final String ROOT_WORD = "BRCA1 Gene";
    static private final String ROOT_URI = "Abdomen";
 
    public static void main( String[] args ) {
