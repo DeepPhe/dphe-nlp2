@@ -11,11 +11,9 @@
     <description>Cancer Deep Phenotype Extraction (DeepPhe) Core module</description>
     <packaging>jar</packaging>
     <properties>
-        <deepphe.version>latest</deepphe.version>
-<!--        <deepphe.neo4j.version>0.6.0</deepphe.neo4j.version>-->
-<!--        <deepphe.neo4j.version>0.5.0</deepphe.neo4j.version>-->
-        <deepphe.neo4j.version>latest</deepphe.neo4j.version>
-        <!--        <ctakes.version>5.0.0-SNAPSHOT</ctakes.version>-->
+        <deepphe.version>0.7.0</deepphe.version>
+        <deepphe.neo4j.version>0.7.0</deepphe.neo4j.version>
+        <deepphe.onto-db.version>0.7.0</deepphe.onto-db.version>
         <ctakes.version>5.1.0</ctakes.version>
         <hsqldb.version>2.3.4</hsqldb.version>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -27,6 +25,12 @@
             <groupId>org.healthnlp</groupId>
             <artifactId>deepphe-neo4j</artifactId>
             <version>${deepphe.neo4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.healthnlp</groupId>
+            <artifactId>deepphe-onto-db2</artifactId>
+            <version>${deepphe.onto-db.version}</version>
         </dependency>
 
         <dependency>
@@ -344,6 +348,26 @@
                                 </typeSystemInclude>
                             </typeSystemIncludes>
                             <limitToProject>true</limitToProject>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-dependencies-ide</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <!-- copy the ontology to ${project.basedir}/resources to work with IDE -->
+                            <includeArtifactIds>deepphe-onto-db2</includeArtifactIds>
+                            <excludes>**/META-INF/**</excludes>
+                            <outputDirectory>${project.basedir}/resources</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
