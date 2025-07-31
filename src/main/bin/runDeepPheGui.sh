@@ -19,7 +19,7 @@ CLASS_PATH=$DEEPPHE_HOME/resources/:$DEEPPHE_HOME/lib/*
 LOG4J_PARM=-Dlog4j.configuration=file:$DEEPPHE_HOME/resources/log4j.xml
 
 GUI_RUNNER=org.apache.ctakes.gui.pipeline.PiperRunnerGui
-PIPER_FILE=resources/pipeline/DpheXnEval.piper
+PIPER_FILE=resources/pipeline/DefaultDeepPhe.piper
 
 echo "Usage: runDeepPheGui -i {inputDir} -o {outputDir}"
 

@@ -21,20 +21,10 @@ goto end
 @REM use JAVA_HOME if set
 if exist "%JAVA_HOME%\bin\java.exe" set PATH=%JAVA_HOME%\bin;%PATH%
 
-echo To use this script you must use the following Parameters (-i,o,-r,--user,--pass):
+echo To use this script you must use the following Parameters (-i,-o):
 echo   InputDirectory (-i)     The directory containing clinical notes.
 echo   OutputDirectory (-o)    The directory to which output files should be written.
-echo   StartNeo4j (-n)         Location of the Neo4j installation.
-echo                           Leave this blank if you do not wish to auto-start Neo4j.
-echo                           If you use this option then the neo4j server 
-echo                             will remain active after the pipeline ends.
-echo   Neo4jUri (-r)           URI for the Neo4j Server.  
-echo                           Normally bolt://127.0.0.1:7687
-echo   Neo4jUser (--user)      The username for Neo4j.  
-echo                           Normally "neo4j".
-echo   Neo4jPass (--pass)      The password for Neo4j.
-echo                           Normally "neo4j" until you change it.
-echo Example: runDeepPhe -i path/to/myFiles -o put/my/output -r bolt://127.0.0.1:7687 --user neo4j --pass neo4j
+echo Example: runDeepPhe -i path/to/myFiles -o put/my/output
 
 cd "%DEEPPHE_HOME%"
 set "CLASS_PATH=%DEEPPHE_HOME%\resources\;%DEEPPHE_HOME%\lib\*"

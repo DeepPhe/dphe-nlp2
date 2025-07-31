@@ -25,7 +25,7 @@ cd "%DEEPPHE_HOME%"
 set "CLASS_PATH=%DEEPPHE_HOME%\resources\;%DEEPPHE_HOME%\lib\*"
 set LOG4J_PARM=-Dlog4j.configuration="file:\%DEEPPHE_HOME%\config\log4j.xml"
 set PIPE_RUNNER=org.apache.ctakes.gui.pipeline.PiperRunnerGui
-set PIPER_FILE=resources/pipeline/DpheXnEval.piper
+set PIPER_FILE=resources/pipeline/DefaultDeepPhe.piper
 java -cp "%CLASS_PATH%" %LOG4J_PARM% -Xms512M -Xmx3g %PIPE_RUNNER% -p %PIPER_FILE% %*
 cd %CURRENT_DIR%
 
