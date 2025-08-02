@@ -18,7 +18,6 @@ package org.healthnlp.deepphe.nlp.util
 
 //  Ignore dos/windows carriage return characters when reading files.
 set CRtoSpace=true
-cli PatientList=L
 set PrettyPrint=yes
 
 // New settings for cased ner, used with the ontology.
