@@ -115,7 +115,8 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
    private String _casDateFormat;
 
 
-   static private final float MIN_CONFIDENCE = 70f;
+//   static private final float MIN_CONFIDENCE = 70f;
+   static private final float MIN_CONFIDENCE = 0.10f;
 
    private DateTimeFormatter _dateWriteFormatter;
    private DateTimeFormatter _casDateFormatter;
