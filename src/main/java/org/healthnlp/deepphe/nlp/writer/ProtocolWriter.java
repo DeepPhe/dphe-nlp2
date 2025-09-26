@@ -200,7 +200,7 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
    final private Map<Collection<String>, String> _stageUriMap = new HashMap<>();
    final private Map<Collection<String>, String> _gradeUriMap = new HashMap<>();
    final private Map<Collection<String>, String> _ecogUriMap = new HashMap<>();
-   final private Map<Collection<String>, String> _spaceUriMap = new HashMap<>();
+   final private Map<Collection<String>, String> _melStageMap = new HashMap<>();
    final private Map<Collection<String>, String> _melanomaUriMap = new HashMap<>();
    final private Map<Collection<String>, String> _melSiteUriMap = new HashMap<>();
    final private Map<Collection<String>, String> _melMetsUriMap = new HashMap<>();
@@ -366,11 +366,11 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
       _ecogUriMap.put( Collections.singleton( "ECOGPerformanceStatus5" ), "5" );
 
 //      _spaceUriMap.put( Collections.singleton( "Local" ), "local" );
-      _spaceUriMap.put( new HashSet<>( Arrays.asList( "Local", "Localized", "LocallyExtensive", "LocalTumorSpread",
+      _melStageMap.put( new HashSet<>( Arrays.asList( "Local", "Localized", "LocallyExtensive", "LocalTumorSpread",
             "LocalizedMetastasis", "LocalizedDisease" ) ), "local" );
-      _spaceUriMap.put( new HashSet<>( Arrays.asList( "Regional", "Local_sub_Regional", "RegionalDisease" ) ), "regional" );
+      _melStageMap.put( new HashSet<>( Arrays.asList( "Regional", "Local_sub_Regional", "RegionalDisease" ) ), "regional" );
 //      _spaceUriMap.put( Collections.singleton( "Remote" ), "distant" );
-      _spaceUriMap.put( new HashSet<>( Arrays.asList( "Remote", "WidespreadMetastasis", "WidespreadDisease" ) ), "distant" );
+      _melStageMap.put( new HashSet<>( Arrays.asList( "Remote", "WidespreadMetastasis", "WidespreadDisease" ) ), "distant" );
 
       setMapUris( "ductal", "BreastDuctalCarcinoma", _brCaHistologyMap );
       setMapUris( "lobular", "BreastLobularCarcinoma", _brCaHistologyMap );
@@ -1056,10 +1056,6 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
          final Collection<IdentifiedAnnotation> results = getYesPatient( DpheGroup.TEST_RESULT, groupAnnotations );
          updateCategory( ecog, docDate, episode, results, _ecogUriMap );
          if ( hasYes( ca_mel ) || hasYes( ca_skin ) ) {
-            final Collection<IdentifiedAnnotation> spaces =
-                  getYesPatient( DpheGroup.SPATIAL_QUALIFIER, groupAnnotations );
-            // Don't want to check melanoma "local, regional, distant" if no melanoma.
-            updateCategory( mel_stage, docDate, episode, spaces, _spaceUriMap );
             updateCategory( mel_type, docDate, episode, cancers, _melanomaUriMap );
             updateCategory( mel_hist, docDate, episode, cancers, _melHistologyMap );
             final Collection<IdentifiedAnnotation> sites
@@ -1075,6 +1071,25 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
 //                  getPatient( DpheGroup.PATHOLOGIC_PROCESS, groupAnnotations ) );
 //            updateYesNoInfo( mel_ulcer, docDate, episode, _ulcer, findings );
             updateYesNoInfo( mel_ulcer, docDate, episode, _ulcerUris, findings );
+            final Collection<IdentifiedAnnotation> pathProcess = getPatient( DpheGroup.PATHOLOGIC_PROCESS, groupAnnotations );
+            updateYesNoInfo( mel_ulcer, docDate, episode, _ulcerUris, pathProcess );
+            updateYesNoInfo( mel_ulcer, docDate, episode, _ulcerUris, cancers );
+            final Collection<IdentifiedAnnotation> masses
+                    = new ArrayList<>( getYesPatient( DpheGroup.MASS, groupAnnotations ) );
+            updateYesNoInfo( mel_ulcer, docDate, episode, _ulcerUris, masses );
+
+            final Collection<IdentifiedAnnotation> spaces =
+                    getYesPatient( DpheGroup.SPATIAL_QUALIFIER, groupAnnotations );
+            final Collection<IdentifiedAnnotation> diseaseQualifiers =
+                    getYesPatient( DpheGroup.DISEASE_QUALIFIER, groupAnnotations );
+            final Collection<IdentifiedAnnotation> courses =
+                    getYesPatient( DpheGroup.COURSE_OF_DISEASE, groupAnnotations );
+            // Don't want to check melanoma "local, regional, distant" if no melanoma.
+            updateCategory( mel_stage, docDate, episode, spaces, _melStageMap);
+            updateCategory( mel_stage, docDate, episode, diseaseQualifiers, _melStageMap);
+            updateCategory( mel_stage, docDate, episode, courses, _melStageMap);
+            updateCategory( mel_stage, docDate, episode, findings, _melStageMap);
+            updateCategory( mel_stage, docDate, episode, cancers, _melStageMap);
          }
          // Different from protocol.  Instead of y/n/u and value if yes:
          // Positive, Negative, Elevated, Unknown, Equivocal, Not Assessed
