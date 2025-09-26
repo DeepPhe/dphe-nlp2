@@ -189,7 +189,8 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
    final private Collection<String> _thoracicCaUris = new HashSet<>();
 
    //    final private Collection<String> _lymphNodes = new HashSet<>();
-   final private Collection<String> _ulcer = new HashSet<>();
+//   final private Collection<String> _ulcer = new HashSet<>();
+   final private Collection<String> _ulcerUris = new HashSet<>();
 
    final private Map<Collection<String>, String> _siteCancersMap = new HashMap<>();
    private final Map<Collection<String>, String> _brCaHistologyMap = new HashMap<>();
@@ -464,7 +465,12 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
       setMapUris( "uterus", "Uterus", _melMetsUriMap );
 
 //        _lymphNodes.addAll( Neo4jOntologyConceptUtil.getBranchUris( "LymphNode" ) );
-      _ulcer.addAll( Neo4jOntologyConceptUtil.getBranchUris( " TissueDamage" ) );
+//      _ulcer.addAll( Neo4jOntologyConceptUtil.getBranchUris( " TissueDamage" ) );
+      _ulcerUris.add( "Ulcer" );
+      _ulcerUris.addAll( Neo4jOntologyConceptUtil.getBranchUris( "SkinUlcer" ) );
+      _ulcerUris.addAll( Neo4jOntologyConceptUtil.getBranchUris( "Ulceration" ) );
+      _ulcerUris.addAll( Neo4jOntologyConceptUtil.getBranchUris( "ErodedAndUlceratedLesion" ) );
+      _ulcerUris.addAll( Neo4jOntologyConceptUtil.getBranchUris( "SkinNodulo_sub_UlcerativeBasalCellCarcinoma" ) );
 
       final File protocolFile = new File( getRootDirectory(), getFileName() );
       try ( Writer writer = new BufferedWriter( new FileWriter( protocolFile ) ) ) {
@@ -1064,9 +1070,10 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
             updateCategory( cut_mel_site, docDate, episode, sites, _melSiteUriMap );
             updateCategory( mel_met, docDate, episode, sites, _melMetsUriMap );
             // Modified from Protocol, yes,No,Unk instead of "present / Not Present"
-            updateYesNoInfo( mel_ulcer, docDate, episode, Collections.singleton( "Ulceration" ),
-                  getPatient( DpheGroup.PATHOLOGIC_PROCESS, groupAnnotations ) );
-            updateYesNoInfo( mel_ulcer, docDate, episode, _ulcer, findings );
+//            updateYesNoInfo( mel_ulcer, docDate, episode, Collections.singleton( "Ulceration" ),
+//                  getPatient( DpheGroup.PATHOLOGIC_PROCESS, groupAnnotations ) );
+//            updateYesNoInfo( mel_ulcer, docDate, episode, _ulcer, findings );
+            updateYesNoInfo( mel_ulcer, docDate, episode, _ulcerUris, findings );
          }
          // Different from protocol.  Instead of y/n/u and value if yes:
          // Positive, Negative, Elevated, Unknown, Equivocal, Not Assessed

@@ -80,7 +80,11 @@ final public class VumcDocFixer {
 
 
    static public String fixDoc( final File file ) {
-      String text = readFile( file ).trim();
+      String text = readFile(file).trim();
+      return fixText(text);
+   }
+
+   static public String fixText( String text ) {
       if ( text.isEmpty() ) {
          return text;
       }
