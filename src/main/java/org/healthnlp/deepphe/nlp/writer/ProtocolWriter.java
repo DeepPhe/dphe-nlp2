@@ -913,7 +913,7 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
       }
 
       private boolean hasYes( final YES_NO_TITLE title ) {
-         final YesNoInfo yesNo = _yesNoInfoMap.get( title.name() );
+         final YesNoInfo yesNo = _yesNoInfoMap.get( title );
          return yesNo != null && yesNo.hasYes();
       }
 
@@ -1055,7 +1055,7 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
          updateCategory( ca_grade_emr, docDate, episode, grades, _gradeUriMap );
          final Collection<IdentifiedAnnotation> results = getYesPatient( DpheGroup.TEST_RESULT, groupAnnotations );
          updateCategory( ecog, docDate, episode, results, _ecogUriMap );
-         if ( hasYes( ca_mel ) ) {
+         if ( hasYes( ca_mel ) || hasYes( ca_skin ) ) {
             final Collection<IdentifiedAnnotation> spaces =
                   getYesPatient( DpheGroup.SPATIAL_QUALIFIER, groupAnnotations );
             // Don't want to check melanoma "local, regional, distant" if no melanoma.
