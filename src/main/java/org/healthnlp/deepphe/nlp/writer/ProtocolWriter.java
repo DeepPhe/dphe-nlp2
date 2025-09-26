@@ -363,9 +363,12 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
       _ecogUriMap.put( Collections.singleton( "ECOGPerformanceStatus4" ), "4" );
       _ecogUriMap.put( Collections.singleton( "ECOGPerformanceStatus5" ), "5" );
 
-      _spaceUriMap.put( Collections.singleton( "local" ), "local" );
-      _spaceUriMap.put( new HashSet<>( Arrays.asList( "Regional", "Local_sub_Regional" ) ), "regional" );
-      _spaceUriMap.put( Collections.singleton( "Remote" ), "distant" );
+//      _spaceUriMap.put( Collections.singleton( "Local" ), "local" );
+      _spaceUriMap.put( new HashSet<>( Arrays.asList( "Local", "Localized", "LocallyExtensive", "LocalTumorSpread",
+            "LocalizedMetastasis", "LocalizedDisease" ) ), "local" );
+      _spaceUriMap.put( new HashSet<>( Arrays.asList( "Regional", "Local_sub_Regional", "RegionalDisease" ) ), "regional" );
+//      _spaceUriMap.put( Collections.singleton( "Remote" ), "distant" );
+      _spaceUriMap.put( new HashSet<>( Arrays.asList( "Remote", "WidespreadMetastasis", "WidespreadDisease" ) ), "distant" );
 
       setMapUris( "ductal", "BreastDuctalCarcinoma", _brCaHistologyMap );
       setMapUris( "lobular", "BreastLobularCarcinoma", _brCaHistologyMap );
