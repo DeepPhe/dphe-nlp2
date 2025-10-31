@@ -901,16 +901,23 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
          _patientId = patientId;
       }
 
+
       private void addCasInfo( final JCas jCas ) {
+         final Collection<IdentifiedAnnotation> annotations = JCasUtil.select( jCas, IdentifiedAnnotation.class );
+         final Map<DpheGroup, List<IdentifiedAnnotation>> dpheGroupMap = makeDpheGroupMap( annotations );
+         final Collection<IdentifiedAnnotation> cancers = getPatient( DpheGroup.CANCER, dpheGroupMap );
+         if ( cancers.isEmpty() ) {
+            // If there are no cancer mentions in the doc then don't record anything.  Can lead to FPs for sites, etc.
+            return;
+         }
          _docCount++;
          final LocalDateTime docDate = getDocDate( jCas );
          final String episode = getEpisode( jCas );
-         final Collection<IdentifiedAnnotation> annotations = JCasUtil.select( jCas, IdentifiedAnnotation.class );
-         final Map<DpheGroup, List<IdentifiedAnnotation>> dpheGroupMap = makeDpheGroupMap( annotations );
          handleFamily( docDate, episode, dpheGroupMap );
          handlePatient( jCas, docDate, episode, dpheGroupMap );
          _episodes.add( episode );
       }
+
 
       private boolean hasYes( final YES_NO_TITLE title ) {
          final YesNoInfo yesNo = _yesNoInfoMap.get( title );
@@ -1043,9 +1050,8 @@ public class ProtocolWriter extends AbstractJCasFileWriter {
          updateYesNoInfo( comorb_kidney, docDate, episode, _kidneyDiseaseUris, disorders );
          updateYesNoInfo( comorb_autoimm, docDate, episode, _immuneDiseaseUris, disorders );
          // Modified Protocol's generic "Histology – Clinical Narrative (ca_hist_emr)" for brca vs. ovca
-         final Collection<IdentifiedAnnotation> yesCancers = getPatient( DpheGroup.CANCER, groupAnnotations );
-         updateCategory( ca_hist_emr_brca, docDate, episode, yesCancers, _brCaHistologyMap );
-         updateCategory( ca_hist_emr_ovca, docDate, episode, yesCancers, _ovCaHistologyMap );
+         updateCategory( ca_hist_emr_brca, docDate, episode, cancers, _brCaHistologyMap );
+         updateCategory( ca_hist_emr_ovca, docDate, episode, cancers, _ovCaHistologyMap );
          final Collection<IdentifiedAnnotation> stages
                = new ArrayList<>( getYesAllPatient( DpheGroup.DISEASE_STAGE_QUALIFIER, groupAnnotations ) );
          stages.addAll( getYesPatient( DpheGroup.BEHAVIOR, groupAnnotations ) );
