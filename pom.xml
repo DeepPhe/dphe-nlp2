@@ -6,14 +6,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.healthnlp</groupId>
     <artifactId>deepphe-nlp</artifactId>
-    <version>0.7.0</version>
+    <version>0.7.1</version>
     <name>deepphe-nlp</name>
     <description>Cancer Deep Phenotype Extraction (DeepPhe) Core module</description>
     <packaging>jar</packaging>
     <properties>
-        <deepphe.version>0.7.0</deepphe.version>
+        <deepphe.version>0.7.1</deepphe.version>
         <deepphe.neo4j.version>0.7.0</deepphe.neo4j.version>
-        <deepphe.onto-db.version>0.7.0</deepphe.onto-db.version>
+        <deepphe.onto-db.version>0.7.1</deepphe.onto-db.version>
         <ctakes.version>5.1.0</ctakes.version>
         <hsqldb.version>2.3.4</hsqldb.version>
         <maven.compiler.source>1.8</maven.compiler.source>
