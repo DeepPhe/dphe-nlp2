@@ -6,5 +6,5 @@ set ZipMax=1000
 
 // Place table output in zip files.  The last table file will not be zipped (future fix).
 set ZipTable=yes
-
+// Maximum number of patients to place in a table.
 set PatientMax=1000

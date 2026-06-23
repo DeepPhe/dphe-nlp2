@@ -26,8 +26,12 @@ set deepphe_2023_v1_type=JDBC
 // The ontology graph.
 set GraphDb=resources/neo4j/DeepPhe_2023_v1.db
 
-// Use some default limitations on what DeepPhe should report.
-load pipeline/DefaultLimits
+// Set limitations (count, confidence) on how much DeepPhe should report.
+load pipeline/SummaryLimits
+// Set preferences for json output files.
+load pipeline/JsonPrefs
+// Set preferences for Zipping output files.
+load pipeline/ZipPrefs
 
 // Connect to local ontology graph embedded db.
 add Neo4jEmbeddedConnectAe
