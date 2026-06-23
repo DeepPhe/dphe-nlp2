@@ -4,8 +4,6 @@
 package org.apache.ctakes.core.patient
 package org.apache.ctakes.core.util.log
 package org.apache.ctakes.ner.ae
-package org.healthnlp.deepphe.core.ae
-package org.healthnlp.deepphe.nlp.ae
 package org.healthnlp.deepphe.nlp.ae.annotation
 package org.healthnlp.deepphe.nlp.ae.attribute
 package org.healthnlp.deepphe.nlp.ae.doc
@@ -130,7 +128,7 @@ add DpheTableWriter SubDirectory=ents TableType=HTML
 // Write each document's relations to an HTML file.  TableType can also be TAB, CSV, BSV
 add DpheRelTableWriter SubDirectory=rels TableType=HTML
 // Write each document to plain text with entities and relations marked.
-add pretty.plaintext.PrettyTextWriterFit SubDirectory=plaintext
+add pretty.plaintext.PrettyTextWriterFit SubDirectory=ascii
 
 // Need to increment count of patient notes for the ProtocolWriter.
 add DocComplete
@@ -147,12 +145,12 @@ add PatientSummarizer
 add PatientSummaryXnJsonFileWriter SubDirectory=json
 
 // Write Patient information to a table.  For Debug purposes.
-//add PatientSummaryXnTableWriter PatientMax=100
+add PatientSummaryXnTableWriter PatientMax=100
 
 // Clean the Patient Summary.
 add PatientSummaryXnCleaner
 // Clear the URI cache.  Set ClenAfterDoc to 'yes' if there are patients with large numbers of documents.
-add UriInfoCacheCleaner CleanAfterDoc=no
+add UriInfoCacheCleaner CleanAfterDoc=yes
 // Always clear the patient cas and note last as other cleaners may rely upon the count there.
 add PatientCasCleaner
 add PatientNoteCleaner
