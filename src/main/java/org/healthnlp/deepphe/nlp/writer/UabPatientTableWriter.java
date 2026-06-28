@@ -77,8 +77,8 @@ public class UabPatientTableWriter extends AbstractTableFileWriter {
    /**
     * The table header is constant, it is not based upon any values.
     */
-   static private List<String> HEADER = Arrays.asList( " URI ", " CUI ", " TUI ", " Group ", " Type ", " Pref. Text ",
-         " Negated ", " Uncertain ", " Historic ", " Mentions ", " Confidence " );
+   static private final List<String> HEADER = Arrays.asList( " URI ", " CUI ", " TUI ", " Group ", " Type ",
+         " Pref. Text ", " Negated ", " Uncertain ", " Historic ", " Mentions ", " Confidence " );
 
    /**
     * We need to keep a copy of the current patient id to create the file name.

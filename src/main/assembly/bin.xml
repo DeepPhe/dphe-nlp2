@@ -27,12 +27,12 @@
    </dependencySets>
 
    <fileSets>
-      <fileSet>
-         <directory>resources</directory>
-         <fileMode>755</fileMode>
-         <directoryMode>755</directoryMode>
-         <outputDirectory>resources</outputDirectory>
-      </fileSet>
+<!--      <fileSet>-->
+<!--         <directory>resources</directory>-->
+<!--         <fileMode>755</fileMode>-->
+<!--         <directoryMode>755</directoryMode>-->
+<!--         <outputDirectory>resources</outputDirectory>-->
+<!--      </fileSet>-->
       <fileSet>
          <directory>src/main/resources</directory>
          <fileMode>755</fileMode>
@@ -46,13 +46,20 @@
          <outputDirectory>bin</outputDirectory>
       </fileSet>
       <fileSet>
+         <directory>src/main/config</directory>
+         <fileMode>755</fileMode>
+         <directoryMode>755</directoryMode>
+         <outputDirectory>config</outputDirectory>
+      </fileSet>
+      <fileSet>
          <directory>.</directory>
          <outputDirectory/>
          <fileMode>644</fileMode>
          <directoryMode>755</directoryMode>
          <includes>
             <include>README.md</include>
-            <!--            <include>LICENSE</include>-->
+            <include>LICENSE</include>
+            <include>NOTICE</include>
          </includes>
       </fileSet>
    </fileSets>

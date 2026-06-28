@@ -19,13 +19,14 @@ CLASS_PATH=$DEEPPHE_HOME/resources/:$DEEPPHE_HOME/lib/*
 LOG4J_PARM=-Dlog4j.configuration=file:$DEEPPHE_HOME/config/log4j.xml
 
 GUI_RUNNER=org.apache.ctakes.gui.pipeline.PiperRunnerGui
+PIPER_FILE=resources/pipeline/DefaultDeepPhe.piper
 
 cd $DEEPPHE_HOME
 
-java -cp $CLASS_PATH $LOG4J_PARM -Xms512M -Xmx3g $GUI_RUNNER "$@"
+java -cp $CLASS_PATH $LOG4J_PARM -Xms512M -Xmx3g $GUI_RUNNER -p $PIPER_FILE "$@"
 # rather than check uname and try to account for emulators etc., just check for failure and retry as cygwin.
 #if [ $? != 0 ]; then
 #   CLASS_PATH=`cygpath -pw $CLASS_PATH`
 #   LOG4J_PARM=-Dlog4j.configuration=file:`cygpath -w $DEEPPHE_HOME`/config/log4j.xml
-#   java -cp $CLASS_PATH $LOG4J_PARM -Xms512M -Xmx3g $GUI_RUNNER "$@"
+#   java -cp $CLASS_PATH $LOG4J_PARM -Xms512M -Xmx3g $GUI_RUNNER -p $PIPER_FILE "$@"
 #fi

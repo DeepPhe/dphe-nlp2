@@ -32,8 +32,8 @@ public class UabRecurrenceTableWriter extends UabPatientTableWriter {
    static private final List<String> REPORTABLE_LABEL =
          Arrays.asList( "", "", "Report", "", "", "", "", "", "", "", "" );
 
-   static private List<String> HEADER = Arrays.asList( " URI ", " CUI ", " TUI ", " Group ", " Type ", " Pref. Text ",
-         " Negated ", " Uncertain ", " Historic ", " Mentions ", " Confidence " );
+   static private final List<String> HEADER = Arrays.asList( " URI ", " CUI ", " TUI ", " Group ", " Type ",
+         " Pref. Text ", " Negated ", " Uncertain ", " Historic ", " Mentions ", " Confidence " );
 
 
    static private final String RECURRENT = "Recurrent";
